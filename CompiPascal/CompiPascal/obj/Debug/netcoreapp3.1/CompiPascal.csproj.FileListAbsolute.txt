@@ -1,0 +1,17 @@
+C:\Users\ka_sa\Documents\GitHub\CompiPascal\CompiPascal\CompiPascal\bin\Debug\netcoreapp3.1\CompiPascal.exe
+C:\Users\ka_sa\Documents\GitHub\CompiPascal\CompiPascal\CompiPascal\bin\Debug\netcoreapp3.1\CompiPascal.deps.json
+C:\Users\ka_sa\Documents\GitHub\CompiPascal\CompiPascal\CompiPascal\bin\Debug\netcoreapp3.1\CompiPascal.runtimeconfig.json
+C:\Users\ka_sa\Documents\GitHub\CompiPascal\CompiPascal\CompiPascal\bin\Debug\netcoreapp3.1\CompiPascal.runtimeconfig.dev.json
+C:\Users\ka_sa\Documents\GitHub\CompiPascal\CompiPascal\CompiPascal\bin\Debug\netcoreapp3.1\CompiPascal.dll
+C:\Users\ka_sa\Documents\GitHub\CompiPascal\CompiPascal\CompiPascal\bin\Debug\netcoreapp3.1\CompiPascal.pdb
+C:\Users\ka_sa\Documents\GitHub\CompiPascal\CompiPascal\CompiPascal\bin\Debug\netcoreapp3.1\Irony.dll
+C:\Users\ka_sa\Documents\GitHub\CompiPascal\CompiPascal\CompiPascal\obj\Debug\netcoreapp3.1\CompiPascal.csprojAssemblyReference.cache
+C:\Users\ka_sa\Documents\GitHub\CompiPascal\CompiPascal\CompiPascal\obj\Debug\netcoreapp3.1\CompiPascal.Form1.resources
+C:\Users\ka_sa\Documents\GitHub\CompiPascal\CompiPascal\CompiPascal\obj\Debug\netcoreapp3.1\CompiPascal.csproj.GenerateResource.cache
+C:\Users\ka_sa\Documents\GitHub\CompiPascal\CompiPascal\CompiPascal\obj\Debug\netcoreapp3.1\CompiPascal.AssemblyInfoInputs.cache
+C:\Users\ka_sa\Documents\GitHub\CompiPascal\CompiPascal\CompiPascal\obj\Debug\netcoreapp3.1\CompiPascal.AssemblyInfo.cs
+C:\Users\ka_sa\Documents\GitHub\CompiPascal\CompiPascal\CompiPascal\obj\Debug\netcoreapp3.1\CompiPascal.csproj.CoreCompileInputs.cache
+C:\Users\ka_sa\Documents\GitHub\CompiPascal\CompiPascal\CompiPascal\obj\Debug\netcoreapp3.1\CompiPascal.csproj.CopyComplete
+C:\Users\ka_sa\Documents\GitHub\CompiPascal\CompiPascal\CompiPascal\obj\Debug\netcoreapp3.1\CompiPascal.dll
+C:\Users\ka_sa\Documents\GitHub\CompiPascal\CompiPascal\CompiPascal\obj\Debug\netcoreapp3.1\CompiPascal.pdb
+C:\Users\ka_sa\Documents\GitHub\CompiPascal\CompiPascal\CompiPascal\obj\Debug\netcoreapp3.1\CompiPascal.genruntimeconfig.cache
