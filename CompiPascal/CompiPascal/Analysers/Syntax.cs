@@ -117,34 +117,45 @@ namespace CompiPascal.Analysers
                     {
                         return new If(expression(actual.ChildNodes[0].ChildNodes[0].ChildNodes[2]), instructions(actual.ChildNodes[0].ChildNodes[0].ChildNodes[6]), instructions(actual.ChildNodes[0].ChildNodes[1].ChildNodes[2]));
                     }
-                
-                //case "while":
-                //    return new while(expression(actual))
-                /*case "mientras":
-                    return new Mientras(expresion_logica(actual.ChildNodes.ElementAt(2)), instrucciones(actual.ChildNodes.ElementAt(5)));
-                case "numero":
-                    string tokenValor = actual.ChildNodes.ElementAt(1).ToString().Split(' ')[0];
-                    return new Declaracion(tokenValor, Simbolo.Tipo.NUMERO);
-                case "if":
-                    if (actual.ChildNodes.Count == 7)
+                case "while":
+                    return new While(expression(actual.ChildNodes[1]), instructions(actual.ChildNodes[4]));
+                default: 
+                    if (actual.ChildNodes.Count == 5) //var assignment
                     {
-                        return new If(expresion_logica(actual.ChildNodes.ElementAt(2)), instrucciones(actual.ChildNodes.ElementAt(5)));
+                        return new Assign(actual.ChildNodes[0].Token.Text, expression(actual.ChildNodes[3]));
                     }
-                    else
+                    else 
                     {
-                        return new If(expresion_logica(actual.ChildNodes.ElementAt(2)), instrucciones(actual.ChildNodes.ElementAt(5)), instrucciones(actual.ChildNodes.ElementAt(9)));
+                        //TODO array assignment
+                        return null;
                     }
-                default:
-                    if (actual.ChildNodes.Count == 3)
-                    {
-                        tokenValor = actual.ChildNodes.ElementAt(0).ToString().Split(' ')[0];
-                        return new Asignacion(tokenValor, expresion_numerica(actual));
-                    }
-                    else
-                    {
-                        tokenValor = actual.ChildNodes.ElementAt(0).ToString().Split(' ')[0];
-                        return new Asignacion(tokenValor, expresion_numerica(actual.ChildNodes.ElementAt(2)));
-                    }*/
+                    //case "while":
+                    //    return new while(expression(actual))
+                    /*case "mientras":
+                        return new Mientras(expresion_logica(actual.ChildNodes.ElementAt(2)), instrucciones(actual.ChildNodes.ElementAt(5)));
+                    case "numero":
+                        string tokenValor = actual.ChildNodes.ElementAt(1).ToString().Split(' ')[0];
+                        return new Declaracion(tokenValor, Simbolo.Tipo.NUMERO);
+                    case "if":
+                        if (actual.ChildNodes.Count == 7)
+                        {
+                            return new If(expresion_logica(actual.ChildNodes.ElementAt(2)), instrucciones(actual.ChildNodes.ElementAt(5)));
+                        }
+                        else
+                        {
+                            return new If(expresion_logica(actual.ChildNodes.ElementAt(2)), instrucciones(actual.ChildNodes.ElementAt(5)), instrucciones(actual.ChildNodes.ElementAt(9)));
+                        }
+                    default:
+                        if (actual.ChildNodes.Count == 3)
+                        {
+                            tokenValor = actual.ChildNodes.ElementAt(0).ToString().Split(' ')[0];
+                            return new Asignacion(tokenValor, expresion_numerica(actual));
+                        }
+                        else
+                        {
+                            tokenValor = actual.ChildNodes.ElementAt(0).ToString().Split(' ')[0];
+                            return new Asignacion(tokenValor, expresion_numerica(actual.ChildNodes.ElementAt(2)));
+                        }*/
             }
 
             return null;

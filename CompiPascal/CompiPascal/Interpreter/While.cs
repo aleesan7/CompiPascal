@@ -32,6 +32,8 @@ namespace CompiPascal.Interpreter
                     {
                         instruccion.execute(env);
                     }
+
+                    value = this.condition.evaluate(env);
                 }
                 catch (Exception ex)
                 {

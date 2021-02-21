@@ -232,7 +232,7 @@ namespace CompiPascal.Analysers
                      | identifier + COLON + EQUAL + expresion + SEMICOLON //{:RESULT = new Asignacion(a, b);:}
                      | identifier + dimensiones + COLON + EQUAL + expresion + SEMICOLON //{:RESULT = new AsignacionArreglo(a, b, c);:}
                      | instruccion_if_sup  //{:RESULT = a;:}
-                     | WHILE + expresion + DO + BEGIN + instrucciones + END + SEMICOLON //{:RESULT = new While(a, b);:}
+                     | WHILE +  expresion + DO + BEGIN + instrucciones + END + SEMICOLON //{:RESULT = new While(a, b);:}
                      | FOR + identifier + COLON + EQUAL + expresion + TO + expresion + DO + BEGIN + instrucciones + END + SEMICOLON
                      | REPEAT + instrucciones + UNTIL + expresion + SEMICOLON
                      //| RFOR LEFTPAREN identifier:a EQUAL expresion: b SEMICOLON expresion: c SEMICOLON identifier: d EQUAL expresion: e RIGHTPAREN LLAVIZQ instrucciones:f LLAVDER{:RESULT = new For(new Asignacion(a, b), c, new Asignacion(d, e), f);:}

@@ -4,25 +4,20 @@ using System.Text;
 
 namespace CompiPascal.Interpreter
 {
-    class Declare : Instruction
+    class Assign : Instruction
     {
-        
         private string id;
-     
         private Expression value;
-        
-        public Declare(string id, Expression value)
+
+        public Assign(string id, Expression value)
         {
             this.id = id;
             this.value = value;
         }
 
-
         public override object execute(Environment env)
         {
-            Symbol variable = this.value.evaluate(env);
-            variable.id = this.id;
-            env.declareVariable(this.id, variable);
+            env.assignVariableValue(this.id, value.evaluate(env));
             return null;
         }
     }
