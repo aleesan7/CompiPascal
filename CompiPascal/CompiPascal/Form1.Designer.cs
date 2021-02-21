@@ -30,11 +30,11 @@ namespace CompiPascal
         private void InitializeComponent()
         {
             this.splitContainer1 = new System.Windows.Forms.SplitContainer();
-            this.textBox1 = new System.Windows.Forms.TextBox();
-            this.button1 = new System.Windows.Forms.Button();
-            this.button2 = new System.Windows.Forms.Button();
             this.button3 = new System.Windows.Forms.Button();
-            this.textBox2 = new System.Windows.Forms.TextBox();
+            this.button2 = new System.Windows.Forms.Button();
+            this.button1 = new System.Windows.Forms.Button();
+            this.txtInputEditor = new System.Windows.Forms.TextBox();
+            this.txtOutputEditor = new System.Windows.Forms.TextBox();
             ((System.ComponentModel.ISupportInitialize)(this.splitContainer1)).BeginInit();
             this.splitContainer1.Panel1.SuspendLayout();
             this.splitContainer1.Panel2.SuspendLayout();
@@ -52,40 +52,14 @@ namespace CompiPascal
             this.splitContainer1.Panel1.Controls.Add(this.button3);
             this.splitContainer1.Panel1.Controls.Add(this.button2);
             this.splitContainer1.Panel1.Controls.Add(this.button1);
-            this.splitContainer1.Panel1.Controls.Add(this.textBox1);
+            this.splitContainer1.Panel1.Controls.Add(this.txtInputEditor);
             // 
             // splitContainer1.Panel2
             // 
-            this.splitContainer1.Panel2.Controls.Add(this.textBox2);
+            this.splitContainer1.Panel2.Controls.Add(this.txtOutputEditor);
             this.splitContainer1.Size = new System.Drawing.Size(1118, 588);
             this.splitContainer1.SplitterDistance = 650;
             this.splitContainer1.TabIndex = 0;
-            // 
-            // textBox1
-            // 
-            this.textBox1.Location = new System.Drawing.Point(12, 12);
-            this.textBox1.Multiline = true;
-            this.textBox1.Name = "textBox1";
-            this.textBox1.Size = new System.Drawing.Size(624, 525);
-            this.textBox1.TabIndex = 0;
-            // 
-            // button1
-            // 
-            this.button1.Location = new System.Drawing.Point(37, 547);
-            this.button1.Name = "button1";
-            this.button1.Size = new System.Drawing.Size(94, 29);
-            this.button1.TabIndex = 1;
-            this.button1.Text = "Traducir";
-            this.button1.UseVisualStyleBackColor = true;
-            // 
-            // button2
-            // 
-            this.button2.Location = new System.Drawing.Point(169, 547);
-            this.button2.Name = "button2";
-            this.button2.Size = new System.Drawing.Size(94, 29);
-            this.button2.TabIndex = 2;
-            this.button2.Text = "Ejecutar";
-            this.button2.UseVisualStyleBackColor = true;
             // 
             // button3
             // 
@@ -96,13 +70,40 @@ namespace CompiPascal
             this.button3.Text = "Reportes";
             this.button3.UseVisualStyleBackColor = true;
             // 
-            // textBox2
+            // button2
             // 
-            this.textBox2.Location = new System.Drawing.Point(15, 12);
-            this.textBox2.Multiline = true;
-            this.textBox2.Name = "textBox2";
-            this.textBox2.Size = new System.Drawing.Size(437, 564);
-            this.textBox2.TabIndex = 0;
+            this.button2.Location = new System.Drawing.Point(169, 547);
+            this.button2.Name = "button2";
+            this.button2.Size = new System.Drawing.Size(94, 29);
+            this.button2.TabIndex = 2;
+            this.button2.Text = "Ejecutar";
+            this.button2.UseVisualStyleBackColor = true;
+            this.button2.Click += new System.EventHandler(this.button2_Click);
+            // 
+            // button1
+            // 
+            this.button1.Location = new System.Drawing.Point(37, 547);
+            this.button1.Name = "button1";
+            this.button1.Size = new System.Drawing.Size(94, 29);
+            this.button1.TabIndex = 1;
+            this.button1.Text = "Traducir";
+            this.button1.UseVisualStyleBackColor = true;
+            // 
+            // txtInputEditor
+            // 
+            this.txtInputEditor.Location = new System.Drawing.Point(12, 12);
+            this.txtInputEditor.Multiline = true;
+            this.txtInputEditor.Name = "txtInputEditor";
+            this.txtInputEditor.Size = new System.Drawing.Size(624, 525);
+            this.txtInputEditor.TabIndex = 0;
+            // 
+            // txtOutputEditor
+            // 
+            this.txtOutputEditor.Location = new System.Drawing.Point(15, 12);
+            this.txtOutputEditor.Multiline = true;
+            this.txtOutputEditor.Name = "txtOutputEditor";
+            this.txtOutputEditor.Size = new System.Drawing.Size(437, 564);
+            this.txtOutputEditor.TabIndex = 0;
             // 
             // Form1
             // 
@@ -125,11 +126,11 @@ namespace CompiPascal
         #endregion
 
         private System.Windows.Forms.SplitContainer splitContainer1;
-        private System.Windows.Forms.TextBox textBox1;
+        private System.Windows.Forms.TextBox txtInputEditor;
         private System.Windows.Forms.Button button3;
         private System.Windows.Forms.Button button2;
         private System.Windows.Forms.Button button1;
-        private System.Windows.Forms.TextBox textBox2;
+        private System.Windows.Forms.TextBox txtOutputEditor;
     }
 }
 
