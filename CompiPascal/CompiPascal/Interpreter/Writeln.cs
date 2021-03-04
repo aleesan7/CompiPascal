@@ -7,25 +7,25 @@ namespace CompiPascal.Interpreter
     class Writeln : Instruction
     {
 
-        private Expression content;
+        private LinkedList<Expression> content;
 
-        public Writeln(Expression content)
+        public Writeln(LinkedList<Expression> content)
         {
             this.content = content;
         }
 
-        //public Object ejecutar(TablaDeSimbolos ts)
-        //{
-        //    String impresion = content.ejecutar(ts).ToString();
-        //    System.Diagnostics.Debug.WriteLine(impresion);
-        //    return null;
-        //}
-
         public override object execute(Environment env)
         {
-            Symbol toWrite = this.content.evaluate(env);
-            System.Diagnostics.Debug.WriteLine(toWrite.value.ToString());
-            return toWrite.value;
+            string finalResult = "";
+            Symbol toWrite;
+            foreach (Expression expression in this.content) 
+            {
+                toWrite = expression.evaluate(env);
+                finalResult = finalResult + toWrite.value.ToString();
+            }
+           
+            System.Diagnostics.Debug.WriteLine(finalResult);
+            return null;
         }
     }
 }

@@ -94,6 +94,7 @@ namespace CompiPascal
             this.txtInputEditor.Location = new System.Drawing.Point(12, 12);
             this.txtInputEditor.Multiline = true;
             this.txtInputEditor.Name = "txtInputEditor";
+            this.txtInputEditor.ScrollBars = System.Windows.Forms.ScrollBars.Both;
             this.txtInputEditor.Size = new System.Drawing.Size(624, 525);
             this.txtInputEditor.TabIndex = 0;
             // 

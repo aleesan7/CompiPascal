@@ -21,7 +21,7 @@ namespace CompiPascal.Interpreter
         {
             Symbol left = this.left.evaluate(env);
             Symbol right = this.right.evaluate(env);
-            Symbol result;
+            Symbol result = null;
             Type type = new Type(Types.BOOLEAN, null);
 
             Types resultantType = TypesTable.getType(left.type, right.type);
@@ -31,7 +31,14 @@ namespace CompiPascal.Interpreter
             switch (tipoOperacion)
             {
                 case "=":
-                    result = new Symbol(double.Parse(left.ToString()) == double.Parse(right.ToString()), type, null);
+                    if(resultantType == Types.BOOLEAN) 
+                    {
+                        result = new Symbol(left.ToString().Equals(right.ToString()), type, null);
+                    }
+                    else 
+                    {
+                        result = new Symbol(double.Parse(left.ToString()) == double.Parse(right.ToString()), type, null);
+                    }
                     return result;
                 case "<>":
                     result = new Symbol(double.Parse(left.ToString()) != double.Parse(right.ToString()), type, null);

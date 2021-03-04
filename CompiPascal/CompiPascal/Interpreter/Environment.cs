@@ -7,7 +7,8 @@ namespace CompiPascal.Interpreter
     class Environment
     {
         Dictionary<string, Symbol> variables;
-        Dictionary<string, object> funciones;
+        Dictionary<string, Function> functions;
+        Dictionary<string, Procedure> procedures;
         Dictionary<string, object> structs;
         Environment parent;
 
@@ -15,6 +16,8 @@ namespace CompiPascal.Interpreter
         {
             this.parent = parent;
             this.variables = new Dictionary<string, Symbol>();
+            this.functions = new Dictionary<string, Function>();
+            this.procedures = new Dictionary<string, Procedure>();
         }
 
         public void declareVariable(string id, Symbol variable)
@@ -37,7 +40,16 @@ namespace CompiPascal.Interpreter
             }
             else 
             {
-                throw new Exception("The variable " + id + " doesn´t exist in the current environment, so an assignation isn´t possible.");
+                Environment globalEnv = this.GetGlobalEnvironment();
+
+                if (globalEnv.variables.ContainsKey(id)) 
+                {
+                    globalEnv.variables[id].value = value;
+                }
+                else 
+                {
+                    throw new Exception("The variable " + id + " doesn´t exist, so an assignation isn´t possible.");
+                }
             }
         }
 
@@ -53,9 +65,72 @@ namespace CompiPascal.Interpreter
             return null;
         }
 
+        public Dictionary<string, Symbol> GetVariables() 
+        {
+            return this.variables;
+        }
+
         public bool VariableExists(string id)
         {
             return false;
+        }
+
+        public void AddFunction(string id, Function func) 
+        {
+            if (!this.functions.ContainsKey(id))
+            {
+                this.functions.Add(id, func);
+            }
+            else
+            {
+                throw new Exception("The function " + id + " already exists in the current environment.");
+            }
+        }
+
+        public Function ObtainFunction(string id) 
+        {
+            Environment actual = this;
+            while (actual != null)
+            {
+                if (actual.functions.ContainsKey(id))
+                    return actual.functions[id];
+                actual = actual.parent;
+            };
+            return null;
+        }
+
+        public void AddProcedure(string id, Procedure proc)
+        {
+            if (!this.procedures.ContainsKey(id))
+            {
+                this.procedures.Add(id, proc);
+            }
+            else
+            {
+                throw new Exception("The procedure " + id + " already exists in the current environment.");
+            }
+        }
+
+        public Procedure ObtainProcedure(string id)
+        {
+            Environment actual = this;
+            while (actual != null)
+            {
+                if (actual.procedures.ContainsKey(id))
+                    return actual.procedures[id];
+                actual = actual.parent;
+            };
+            return null;
+        }
+
+        public Environment GetGlobalEnvironment() 
+        {
+            Environment actual = this;
+            while (actual.parent != null) 
+            {
+                actual = actual.parent;
+            }
+            return actual;
         }
     }
 }

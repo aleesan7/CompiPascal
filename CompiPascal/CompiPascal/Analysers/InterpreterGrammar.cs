@@ -19,7 +19,7 @@ namespace CompiPascal.Analysers
             StringLiteral STRING = new StringLiteral("string", "\'");
             var INTEGER = new NumberLiteral("integer");
             var REAL = new RegexBasedTerminal("real", "[0-9]+'.'[0-9]+");
-
+            
             #endregion
 
             #region Terminals
@@ -81,8 +81,8 @@ namespace CompiPascal.Analysers
             var SMALLERTHAN = ToTerm("<");
             var SMALLEROREQUAL = ToTerm("<=");
 
-            var TRUE = ToTerm("true");
-            var FALSE = ToTerm("false");
+            var TRUE = ToTerm("true","boolean");
+            var FALSE = ToTerm("false", "boolean");
 
             RegisterOperators(1, PLUS, MINUS);
             RegisterOperators(2, STAR, DIV);
@@ -105,7 +105,7 @@ namespace CompiPascal.Analysers
             NonTerminal proc_or_func_declaration_list = new NonTerminal("proc_or_func_declaration_list");
             NonTerminal proc_or_func_declaration = new NonTerminal("proc_or_func_declaration");
             NonTerminal procedure_declaration = new NonTerminal("procedure_declaration");
-            NonTerminal function_declaration = new NonTerminal("function_definition");
+            NonTerminal function_declaration = new NonTerminal("function_declaration");
             NonTerminal const_values = new NonTerminal("const_values");
             NonTerminal initial = new NonTerminal("initial");
             NonTerminal instrucciones_sup = new NonTerminal("instrucciones_sup");
@@ -127,8 +127,12 @@ namespace CompiPascal.Analysers
             NonTerminal instruccion_elseif = new NonTerminal("instruccion_elseif");
             NonTerminal tipo = new NonTerminal("tipo");
             NonTerminal lista_identificadores = new NonTerminal("lista_identificadores");
-            NonTerminal functionCall = new NonTerminal("functionCall");
+            NonTerminal functionOrProcedureCall = new NonTerminal("functionOrProcedureCall");
+            NonTerminal case_statement = new NonTerminal("case_statement");
+            NonTerminal case_elements = new NonTerminal("case_elements");
+            NonTerminal case_element = new NonTerminal("case_element");
             NonTerminal asignation = new NonTerminal("asignation");
+            NonTerminal formal_parameter_list = new NonTerminal("formal_parameter_list");
             #endregion
 
             #region Grammar
@@ -166,14 +170,18 @@ namespace CompiPascal.Analysers
                                | VAR + declaracion + EQUAL + const_values + SEMICOLON;
 
             procedure_and_function_declaration_part.Rule = proc_or_func_declaration_list
-                                                  | Empty ;
+                                                  | Empty;
 
             proc_or_func_declaration_list.Rule = proc_or_func_declaration_list + proc_or_func_declaration
                                   | proc_or_func_declaration
                                   | Empty;
 
-            proc_or_func_declaration.Rule = procedure_declaration
-                                   | function_declaration
+            //proc_or_func_declaration.Rule = procedure_declaration
+            //                       | function_declaration
+            //                       | Empty;
+
+            proc_or_func_declaration.Rule = MakePlusRule(proc_or_func_declaration, procedure_declaration)
+                                   | MakePlusRule(proc_or_func_declaration, function_declaration)
                                    | Empty;
 
             procedure_declaration.Rule = PROCEDURE + identifier + LEFTPAREN + parametros + RIGHTPAREN + SEMICOLON + variable_definition_part + BEGIN + instrucciones + END + SEMICOLON
@@ -191,10 +199,28 @@ namespace CompiPascal.Analysers
             //instruccion_sup.ErrorRule = SyntaxError + SEMICOLON
             //                          | SyntaxError ;
 
-            parametros.Rule = lista_identificadores + COLON + tipo //parametros + COMMA + parametro//+ declaracion //{:RESULT = a; RESULT.add(b);:}
-                     | lista_identificadores + COLON + tipo + SEMICOLON
-                     | parametros + VAR + lista_identificadores + COLON + tipo
-                     | Empty;//{:RESULT = new LinkedList<>(); RESULT.add(a);:}
+            //parametros.Rule = parametros + SEMICOLON + parametros
+            //          | lista_identificadores + COLON + tipo;
+
+            parametros.Rule = MakePlusRule(parametros, parametro)
+                     | Empty;
+
+            parametro.Rule = identifier + COLON + tipo
+                     | identifier + COLON + tipo + SEMICOLON
+                     | VAR + identifier + COLON + tipo
+                     | VAR + identifier + COLON + tipo + SEMICOLON;
+
+            //formal_parameter_list.Rule = parametros + SEMICOLON + parametros
+            //                    | Empty;
+
+            //parametros.Rule = lista_identificadores + COLON + tipo
+            //          | VAR + lista_identificadores + COLON + tipo;
+
+
+            //parametros.Rule = lista_identificadores + COLON + tipo //parametros + COMMA + parametro//+ declaracion //{:RESULT = a; RESULT.add(b);:}
+            //         | lista_identificadores + COLON + tipo + SEMICOLON
+            //         | parametros + VAR + lista_identificadores + COLON + tipo
+            //         | Empty;//{:RESULT = new LinkedList<>(); RESULT.add(a);:}
 
             //parametro.Rule = identifier + COLON + tipo;
 
@@ -212,11 +238,12 @@ namespace CompiPascal.Analysers
 
 
 
-            expresiones.Rule = expresiones + COMMA + expresion //{:RESULT = a; RESULT.add(b);:}
-                      | expresion
-                      | Empty; //:a{:RESULT = new LinkedList<>(); RESULT.add(a);:}
+            //expresiones.Rule = expresiones + COMMA + expresion //{:RESULT = a; RESULT.add(b);:}
+            //          | expresion
+            //          | Empty; //:a{:RESULT = new LinkedList<>(); RESULT.add(a);:}
 
-
+            expresiones.Rule = MakeListRule(expresiones, COMMA, expresion)
+                      | Empty;
             //instrucciones.Rule = instrucciones + instruccion //:b{:RESULT = a; RESULT.add(b);:}
             //            | instruccion
             //            | Empty;//:a{:RESULT = new LinkedList<>(); RESULT.add(a);:}
@@ -225,19 +252,21 @@ namespace CompiPascal.Analysers
                         | Empty;
 
 
-            instruccion.Rule = WRITE + LEFTPAREN + expresion + RIGHTPAREN + SEMICOLON  //{:RESULT = new Imprimir(a);:}
-                     | WRITELN + LEFTPAREN + expresion + RIGHTPAREN + SEMICOLON
+            instruccion.Rule = WRITE + LEFTPAREN + expresiones + RIGHTPAREN + SEMICOLON  //{:RESULT = new Imprimir(a);:}
+                     | WRITELN + LEFTPAREN + expresiones + RIGHTPAREN + SEMICOLON
                      | GRAPHTS + LEFTPAREN + RIGHTPAREN + SEMICOLON
                      //| VAR + declaracion  //{:RESULT = a;:}
                      | identifier + COLON + EQUAL + expresion + SEMICOLON //{:RESULT = new Asignacion(a, b);:}
+                     | identifier + COLON + EQUAL + expresion
                      | identifier + dimensiones + COLON + EQUAL + expresion + SEMICOLON //{:RESULT = new AsignacionArreglo(a, b, c);:}
                      | instruccion_if_sup  //{:RESULT = a;:}
                      | WHILE +  expresion + DO + BEGIN + instrucciones + END + SEMICOLON //{:RESULT = new While(a, b);:}
                      | FOR + identifier + COLON + EQUAL + expresion + TO + expresion + DO + BEGIN + instrucciones + END + SEMICOLON
                      | REPEAT + instrucciones + UNTIL + expresion + SEMICOLON
+                     | case_statement
                      //| RFOR LEFTPAREN identifier:a EQUAL expresion: b SEMICOLON expresion: c SEMICOLON identifier: d EQUAL expresion: e RIGHTPAREN LLAVIZQ instrucciones:f LLAVDER{:RESULT = new For(new Asignacion(a, b), c, new Asignacion(d, e), f);:}
-                     | functionCall               //{:RESULT = new LlamadaFuncion(a, new LinkedList<>());:}
-                                                  //| RETURN + SEMICOLON             {:RESULT = new Return();:}
+                     | functionOrProcedureCall               //{:RESULT = new LlamadaFuncion(a, new LinkedList<>());:}
+                                                             //| RETURN + SEMICOLON             {:RESULT = new Return();:}
                      | EXIT + LEFTPAREN + expresion + RIGHTPAREN + SEMICOLON //{:RESULT = new Return(a);:}
                      | BREAK + SEMICOLON //{:RESULT = new Break();:}
                      | CONTINUE + SEMICOLON;
@@ -245,8 +274,10 @@ namespace CompiPascal.Analysers
                                   | SyntaxError + SEMICOLON;
 
 
-            functionCall.Rule = identifier + LEFTPAREN + expresion + RIGHTPAREN + SEMICOLON //{:RESULT = new LlamadaFuncion(a, b);:}
-                       | identifier + LEFTPAREN + RIGHTPAREN + SEMICOLON;
+            functionOrProcedureCall.Rule =  identifier + LEFTPAREN + expresiones + RIGHTPAREN
+                       | identifier + LEFTPAREN + expresiones + RIGHTPAREN + SEMICOLON
+                       | identifier + LEFTPAREN + RIGHTPAREN
+                       | identifier + LEFTPAREN + RIGHTPAREN + SEMICOLON ;
             //declaracion.Rule = lista_identificadores + COLON + tipo
             //          | identifier + COLON + ARRAY + LEFTBRAC + expresion + DOUBLEDOT + expresion + RIGHTBRAC + SEMICOLON;
 
@@ -261,6 +292,11 @@ namespace CompiPascal.Analysers
 
             tipo_funcion.Rule = tipo;//  {:RESULT = a;:}
 
+            case_statement.Rule = CASE + expresion + OF + case_elements + END + SEMICOLON;
+
+            case_elements.Rule = MakePlusRule(case_elements, case_element);
+
+            case_element.Rule = expresion + COLON + instruccion;
 
             expresion.Rule =
                    //MENOS       expresion: a         {:RESULT = new Operacion(a, Operacion.Tipo_operacion.NEGATIVO);:}% prec UMENOS
@@ -278,7 +314,7 @@ namespace CompiPascal.Analysers
                  | NOT + expresion                     //{:RESULT = new Operacion(a, Operacion.Tipo_operacion.NOT);:}% prec RNOT
                  | expresion + OR + expresion          //{:RESULT = new Operacion(a, b, Operacion.Tipo_operacion.OR);:}
                  | expresion + AND + expresion         //{:RESULT = new Operacion(a, b, Operacion.Tipo_operacion.AND);:}
-                 | expresion + COMMA + expresion                                      //| expresion:a CONCAT      expresion: b         //{:RESULT = new Operacion(a, b, Operacion.Tipo_operacion.CONCATENACION);:}
+                 //| expresion + COMMA + expresion                                      //| expresion:a CONCAT      expresion: b         //{:RESULT = new Operacion(a, b, Operacion.Tipo_operacion.CONCATENACION);:}
                  | LEFTPAREN + expresion + RIGHTPAREN       //{:RESULT = a;:}
                  | INTEGER                                     //{:RESULT = new Operacion(new Double(a));:}
                  | REAL                                   //{:RESULT = new Operacion(new Double(a));:}
@@ -286,9 +322,11 @@ namespace CompiPascal.Analysers
                  | TRUE                                      //{:RESULT = new Operacion(a, Operacion.Tipo_operacion.TRUE);:}
                  | FALSE                                     //{:RESULT = new Operacion(a, Operacion.Tipo_operacion.FALSE);:}
                  | identifier                                 //{:RESULT = new Operacion(a, Operacion.Tipo_operacion.identifier);:}
-                 | identifier + LEFTPAREN + expresion + RIGHTPAREN //{:RESULT = new LlamadaFuncion(a, b);:}
-                 | identifier + LEFTPAREN + RIGHTPAREN               //{:RESULT = new LlamadaFuncion(a, new LinkedList<>());:}
+                 //| identifier + LEFTPAREN + expresion + RIGHTPAREN //{:RESULT = new LlamadaFuncion(a, b);:}
+                 //| identifier + LEFTPAREN + RIGHTPAREN               //{:RESULT = new LlamadaFuncion(a, new LinkedList<>());:}
+                 | functionOrProcedureCall
                  | identifier + dimensiones;                  //{:RESULT = new AccesoArreglo(a, b);:}
+
 
 
             instruccion_if_sup.Rule = instruccion_if + instruccion_else //{:RESULT = new If(a);:}

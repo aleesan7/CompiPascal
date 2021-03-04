@@ -17,7 +17,10 @@ namespace CompiPascal.Interpreter
             this.value = value;
         }
 
-
+        public string GetId() 
+        {
+            return this.id;
+        }
         public override object execute(Environment env)
         {
             Symbol variable = this.value.evaluate(env);

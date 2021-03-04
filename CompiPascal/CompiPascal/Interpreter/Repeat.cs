@@ -2,16 +2,15 @@
 using System;
 using System.Collections.Generic;
 using System.Text;
-using System.Linq;
 
 namespace CompiPascal.Interpreter
 {
-    class While : Instruction
+    class Repeat : Instruction
     {
         private Expression condition;
         private LinkedList<Instruction> instructions;
 
-        public While(Expression condition, LinkedList<Instruction> instructions)
+        public Repeat(Expression condition, LinkedList<Instruction> instructions)
         {
             this.condition = condition;
             this.instructions = instructions;
@@ -25,13 +24,13 @@ namespace CompiPascal.Interpreter
             if (value.type.type != Types.BOOLEAN)
                 throw new PascalError(0, 0, "The condition for the if isn´t boolean", "Semantic");
 
-            while (bool.Parse(value.value.ToString())) 
+            do 
             {
                 try
                 {
                     foreach (var instruction in instructions)
                     {
-                        val = instruction.execute(env);
+                       val  = instruction.execute(env);
 
                         if (val != null)
                         {
@@ -41,7 +40,7 @@ namespace CompiPascal.Interpreter
                             }
                             else 
                             {
-                                if (val.ToString().ToLower().Equals("continue")) 
+                                if (val.ToString().ToLower().Equals("continue"))
                                 {
                                     break;
                                 }
@@ -49,9 +48,9 @@ namespace CompiPascal.Interpreter
                         }
                     }
 
-                    if (val != null) 
-                    { 
-                        if (val.ToString().ToLower().Equals("continue")) 
+                    if (val != null)
+                    {
+                        if (val.ToString().ToLower().Equals("continue"))
                         {
                             value = this.condition.evaluate(env);
                             continue;
@@ -64,10 +63,10 @@ namespace CompiPascal.Interpreter
                 {
                     Console.WriteLine(ex.ToString());
                 }
-            }
+            } 
+            while (!bool.Parse(value.value.ToString()));
 
             return null;
         }
-
     }
 }

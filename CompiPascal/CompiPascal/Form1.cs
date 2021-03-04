@@ -26,13 +26,14 @@ namespace CompiPascal
             Syntax syntax = new Syntax();
             syntax.Analyze(inputString);
 
-            //if(syntax.resultsList.Count> 0) 
-            //{
-            //    foreach(string result in syntax.resultsList) 
-            //    {
-            //        txtOutputEditor.Text += result.ToString();
-            //    }
-            //}
+            if (syntax.resultsList.Count > 0)
+            {
+                foreach (string result in syntax.resultsList)
+                {
+                    txtOutputEditor.Text += result.ToString();
+                    txtOutputEditor.Text += Environment.NewLine;
+                }
+            }
             if (syntax.errorsList.Count > 0) 
             {
                 foreach(string error in syntax.errorsList) 

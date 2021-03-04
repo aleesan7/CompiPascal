@@ -18,7 +18,17 @@ namespace CompiPascal.Interpreter
             Symbol variable = env.ObtainVariable(this.id);
             if (variable == null) 
             {
-                throw new Exception("The variable '" + id + "' doesn´t exist.");
+                Environment globalEnv = env.GetGlobalEnvironment();
+
+                variable = globalEnv.ObtainVariable(this.id);
+
+                if (variable == null) { 
+                    throw new Exception("The variable '" + id + "' doesn´t exist.");
+                }
+                else 
+                {
+                    return variable;
+                }
             }
             else 
             {

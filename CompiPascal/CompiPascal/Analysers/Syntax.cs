@@ -14,9 +14,9 @@ namespace CompiPascal.Analysers
     {
         public List<string> resultsList = new List<string>();
         public List<string> errorsList = new List<string>();
-        public void Analyze(string input) 
+        public void Analyze(string input)
         {
-            
+
             InterpreterGrammar grammar = new InterpreterGrammar();
             LanguageData language = new LanguageData(grammar);
 
@@ -29,7 +29,7 @@ namespace CompiPascal.Analysers
             ParseTree tree = parser.Parse(input);
 
             ParseTreeNode root = tree.Root;
-            
+
             Errors errors = new Errors(tree, root);
 
             if (!errors.HasErrors())
@@ -37,8 +37,9 @@ namespace CompiPascal.Analysers
                 generateGraph(root);
 
                 LinkedList<Instruction> variableDeclaration = instructions(root.ChildNodes[2].ChildNodes[1]);
+                LinkedList<Instruction> functionAndProcedureDeclaration = instructions(root.ChildNodes[2].ChildNodes[2].ChildNodes[0].ChildNodes[0]);
                 LinkedList<Instruction> instructionsList = instructions(root.ChildNodes[2].ChildNodes[4]);
-                execute(variableDeclaration, instructionsList);
+                execute(variableDeclaration, functionAndProcedureDeclaration, instructionsList);
 
                 //LinkedList<Instruccion> AST = instrucciones(raiz.ChildNodes.ElementAt(0));
 
@@ -50,30 +51,38 @@ namespace CompiPascal.Analysers
                 //}
 
             }
-            else 
+            else
             {
                 //We print the errors in the output 
             }
 
         }
 
-        public void execute(LinkedList<Instruction> variables, LinkedList<Instruction> instructions)
+        public void execute(LinkedList<Instruction> variables, LinkedList<Instruction> functionsAndProcedures, LinkedList<Instruction> instructions)
         {
             Interpreter.Environment global = new Interpreter.Environment(null);
 
-            foreach(var variable in variables) 
+            foreach (var variable in variables)
             {
                 object exec = variable.execute(global);
             }
-            
+
+            foreach (var funcOrProc in functionsAndProcedures) 
+            {
+                object exec = funcOrProc.execute(global);
+            }
+
             foreach (var instruction in instructions)
             {
-                try 
-                { 
+                try
+                {
                     object execution = instruction.execute(global);
-                //resultsList.Add(execution.ToString());
+                    if (execution != null)
+                    {
+                        resultsList.Add(execution.ToString());
+                    }
                 }
-                catch(Exception ex) 
+                catch (Exception ex)
                 {
                     errorsList.Add(ex.Message);
                 }
@@ -90,6 +99,44 @@ namespace CompiPascal.Analysers
             return listaInstrucciones;
         }
 
+        public LinkedList<Instruction> caseelements(ParseTreeNode actual) 
+        {
+            LinkedList<Instruction> caseElementsList = new LinkedList<Instruction>();
+            foreach(ParseTreeNode node in actual.ChildNodes) 
+            {
+                caseElementsList.AddLast(caseElement(node));
+            }
+
+            return caseElementsList;
+        }
+
+        public LinkedList<Declare> declares(ParseTreeNode actual) 
+        {
+            LinkedList<Declare> listaDeclares = new LinkedList<Declare>();
+            foreach(ParseTreeNode node in actual.ChildNodes)
+            {
+                listaDeclares.AddLast(declare(node));
+            }
+
+            return listaDeclares;
+        }
+
+        public LinkedList<Expression> expressions(ParseTreeNode actual)
+        {
+            LinkedList<Expression> expressionList = new LinkedList<Expression>();
+            foreach (ParseTreeNode node in actual.ChildNodes)
+            {
+                expressionList.AddLast(expression(node));
+            }
+
+            return expressionList;
+        }
+
+        public Instruction caseElement(ParseTreeNode actual) 
+        {
+            return new Case_element(expression(actual.ChildNodes[0]), instruction(actual.ChildNodes[2]));
+        }
+
         public Instruction instruction(ParseTreeNode actual)
         {
             string operationToken = actual.ChildNodes.ElementAt(0).ToString().Split(' ')[0].ToLower();
@@ -100,159 +147,271 @@ namespace CompiPascal.Analysers
                     {
                         return new Declare(actual.ChildNodes[1].ChildNodes[0].Token.Text.ToString(), expression(actual.ChildNodes[3]));
                     }
-                    else 
+                    else
                     {
                         return new Declare(actual.ChildNodes[1].ChildNodes[0].Token.Text.ToString(), newLiteralWithDefaultValue(actual.ChildNodes[1].ChildNodes[2]));
                     }
                 case "writeln":
-                    return new Writeln(expression(actual.ChildNodes.ElementAt(2)));
+                    //return new Writeln(expression(actual.ChildNodes.ElementAt(2)));
+                    return new Writeln(expressions(actual.ChildNodes[2]));
                 case "write":
-                    return new Write(expression(actual.ChildNodes.ElementAt(2)));
+                    //return new Write(expression(actual.ChildNodes.ElementAt(2)));
+                    return new Write(expressions(actual.ChildNodes[2]));
                 case "instruccion_if_sup":
-                    if (actual.ChildNodes[0].ChildNodes.Count == 1) 
+                    if (actual.ChildNodes[0].ChildNodes.Count == 1)
                     {
                         return new If(expression(actual.ChildNodes[0].ChildNodes[0].ChildNodes[2]), instructions(actual.ChildNodes[0].ChildNodes[0].ChildNodes[6]), null);
                     }
-                    else 
+                    else
                     {
                         return new If(expression(actual.ChildNodes[0].ChildNodes[0].ChildNodes[2]), instructions(actual.ChildNodes[0].ChildNodes[0].ChildNodes[6]), instructions(actual.ChildNodes[0].ChildNodes[1].ChildNodes[2]));
                     }
                 case "while":
                     return new While(expression(actual.ChildNodes[1]), instructions(actual.ChildNodes[4]));
-                default: 
-                    if (actual.ChildNodes.Count == 5) //var assignment
+                case "repeat":
+                    return new Repeat(expression(actual.ChildNodes[3]), instructions(actual.ChildNodes[1]));
+                case "for":
+                    return new For(new Assign(actual.ChildNodes[1].Token.Text, expression(actual.ChildNodes[4])), 
+                        new LogicOperation(new Literal(Types.IDENTIFIER, actual.ChildNodes[1].Token.Text), newLiteralWithSetedValue(actual.ChildNodes[6]), "<="), 
+                        new Assign(actual.ChildNodes[1].Token.Text, new ArithmeticOperation(new Literal(Types.IDENTIFIER, actual.ChildNodes[1].Token.Text), new Literal(Types.INTEGER, (object)"1"), "+")),
+                        instructions(actual.ChildNodes[9]));
+                case "break":
+                    return new Break("break");
+                case "continue":
+                    return new Continue("continue");
+                case "exit":
+                    return new Exit("return", expression(actual.ChildNodes[2]));
+                case "function":
+                    if (actual.ChildNodes.Count == 12) 
+                    {
+                        //function with only instructions
+                        return new Function(actual.ChildNodes[1].Token.Text, GetFunctionType(actual.ChildNodes[5].ChildNodes[0].ChildNodes[0].Token.Text.ToString()), instructions(actual.ChildNodes[9]));
+                    }
+                    else 
+                    {
+                        //TODO functions with parameters
+                        return new Function(actual.ChildNodes[1].Token.Text, GetFunctionType(actual.ChildNodes[6].ChildNodes[0].ChildNodes[0].Token.Text.ToString()), declares(actual.ChildNodes[3]), instructions(actual.ChildNodes[10]));
+                    }
+                case "procedure":
+                    if (actual.ChildNodes.Count == 10)
+                    {
+                        //Procedure with only instructions
+                        if (actual.ChildNodes[5].ChildNodes.Count == 0) 
+                        {
+                            return new Procedure(actual.ChildNodes[1].Token.Text, instructions(actual.ChildNodes[7]));
+                        }
+                        else 
+                        {
+                            //Procedure without parameters but with local vars and instructions
+                            return new Procedure(actual.ChildNodes[1].Token.Text, instructions(actual.ChildNodes[5]), instructions(actual.ChildNodes[7]));
+                        }
+                        
+                    }
+                    else 
+                    {
+                        //Procedure with parameters, local variables and instructions
+                        return new Procedure(actual.ChildNodes[1].Token.Text, declares(actual.ChildNodes[3]), instructions(actual.ChildNodes[6]), instructions(actual.ChildNodes[8]));
+                    }
+                case "functionorprocedurecall":
+                    if (actual.ChildNodes[0].ChildNodes.Count == 4)
+                    {
+                        return new FunctionProcedureCall(actual.ChildNodes[0].ChildNodes[0].Token.Text);
+                    }
+                    else 
+                    {
+                        //TODO procedure or function call with parameters
+                        return new FunctionProcedureCall(actual.ChildNodes[0].ChildNodes[0].Token.Text, expressions(actual.ChildNodes[0].ChildNodes[2]));
+                    }
+                case "case_statement":
+                    return new Case(expression(actual.ChildNodes[0].ChildNodes[1]), caseelements(actual.ChildNodes[0].ChildNodes[3]));
+                default:
+                    
+                    if (actual.ChildNodes.Count == 5  || actual.ChildNodes.Count == 4) //var assignment
                     {
                         return new Assign(actual.ChildNodes[0].Token.Text, expression(actual.ChildNodes[3]));
                     }
-                    else 
+                    else
                     {
                         //TODO array assignment
                         return null;
                     }
-                    //case "while":
-                    //    return new while(expression(actual))
-                    /*case "mientras":
-                        return new Mientras(expresion_logica(actual.ChildNodes.ElementAt(2)), instrucciones(actual.ChildNodes.ElementAt(5)));
-                    case "numero":
-                        string tokenValor = actual.ChildNodes.ElementAt(1).ToString().Split(' ')[0];
-                        return new Declaracion(tokenValor, Simbolo.Tipo.NUMERO);
-                    case "if":
-                        if (actual.ChildNodes.Count == 7)
-                        {
-                            return new If(expresion_logica(actual.ChildNodes.ElementAt(2)), instrucciones(actual.ChildNodes.ElementAt(5)));
-                        }
-                        else
-                        {
-                            return new If(expresion_logica(actual.ChildNodes.ElementAt(2)), instrucciones(actual.ChildNodes.ElementAt(5)), instrucciones(actual.ChildNodes.ElementAt(9)));
-                        }
-                    default:
-                        if (actual.ChildNodes.Count == 3)
-                        {
-                            tokenValor = actual.ChildNodes.ElementAt(0).ToString().Split(' ')[0];
-                            return new Asignacion(tokenValor, expresion_numerica(actual));
-                        }
-                        else
-                        {
-                            tokenValor = actual.ChildNodes.ElementAt(0).ToString().Split(' ')[0];
-                            return new Asignacion(tokenValor, expresion_numerica(actual.ChildNodes.ElementAt(2)));
-                        }*/
             }
-
-            return null;
         }
 
-        public Literal newLiteralWithDefaultValue(ParseTreeNode actual) 
+        private Declare declare(ParseTreeNode actual) 
+        {
+            if (actual.ChildNodes.Count == 5) 
+            {
+                return new Declare(actual.ChildNodes[1].Token.Text, newLiteralWithDefaultValue(actual.ChildNodes[3]));
+            }
+            else 
+            {
+                return new Declare(actual.ChildNodes[0].Token.Text, newLiteralWithDefaultValue(actual.ChildNodes[2]));
+            }
+            
+        }
+
+        private Function.FunctionTypes GetFunctionType(string type)
+        {
+            switch (type.ToLower()) 
+            {
+                case "integer":
+                    return Function.FunctionTypes.INTEGER;
+                case "string":
+                    return Function.FunctionTypes.STRING;
+                case "real":
+                    return Function.FunctionTypes.REAL;
+                case "boolean":
+                    return Function.FunctionTypes.BOOLEAN;
+                default:
+                    return Function.FunctionTypes.VOID;
+            }
+        }
+
+        public Literal newLiteralWithDefaultValue(ParseTreeNode actual)
         {
             switch (actual.ChildNodes[0].Token.Terminal.Name.ToLower())
             {
                 case "integer":
-                    return new Literal(Types.INTEGER, 0);
+                    return new Literal(Types.INTEGER, (object)0);
                 case "string":
-                    return new Literal(Types.STRING, "");
+                    return new Literal(Types.STRING, (object)"");
                 case "real":
-                    return new Literal(Types.REAL, 0.0);
+                    return new Literal(Types.REAL, (object)0.0);
                 case "boolean":
-                    return new Literal(Types.BOOLEAN, false);
+                    return new Literal(Types.BOOLEAN, (object)false);
                 default:
                     throw new PascalError(0, 0, "the obtained literal doesn´t have a valid type", "Semantic Error");
             }
         }
+
+        public Literal newLiteralWithSetedValue(ParseTreeNode actual) 
+        {
+            switch (actual.ChildNodes[0].Token.Terminal.Name.ToLower())
+            {
+                case "integer":
+                    return new Literal(Types.INTEGER, (object)actual.ChildNodes[0].Token.Text);
+                case "string":
+                    return new Literal(Types.STRING, (object)actual.ChildNodes[0].Token.Text);
+                case "real":
+                    return new Literal(Types.REAL, (object)actual.ChildNodes[0].Token.Text);
+                case "boolean":
+                    return new Literal(Types.BOOLEAN, (object)actual.ChildNodes[0].Token.Text);
+                case "identifier":
+                    return new Literal(Types.IDENTIFIER, actual.ChildNodes[0].Token.Text);
+                default:
+                    throw new PascalError(0, 0, "the obtained literal doesn´t have a valid type", "Semantic Error");
+            }
+        }
+
+        public Literal newLiteralWithSetedValue(ParseTreeNode actual, string value)
+        {
+            switch (actual.ChildNodes[0].Token.Terminal.Name.ToLower())
+            {
+                case "integer":
+                    return new Literal(Types.INTEGER, (object)value);
+                case "string":
+                    return new Literal(Types.STRING, (object)value);
+                case "real":
+                    return new Literal(Types.REAL, (object)value);
+                case "boolean":
+                    return new Literal(Types.BOOLEAN, (object)value);
+                case "identifier":
+                    return new Literal(Types.IDENTIFIER, (object)value);
+                default:
+                    throw new PascalError(0, 0, "the obtained literal doesn´t have a valid type", "Semantic Error");
+            }
+        }
+
         public Expression expression(ParseTreeNode actual)
         {
             if (actual.ChildNodes.Count == 3)
             {
-                string op = actual.ChildNodes[1].Token.Text;
-                switch (op)
+                if(actual.ChildNodes[0].Token != null && actual.ChildNodes[2].Token != null) 
+                { 
+                    if(!(actual.ChildNodes[0].Token.Text.Equals("(") && actual.ChildNodes[2].Token.Text.Equals(")"))) 
+                    {
+                        string op = actual.ChildNodes[1].Token.Text;
+                        return ArithmeticOrLogicOperation(op, actual);
+                    }
+                    else 
+                    {
+                        return expression(actual.ChildNodes[1]);
+                    }
+                }
+                else 
                 {
-                    case "+":
-                        return new ArithmeticOperation(expression(actual.ChildNodes[0]), expression(actual.ChildNodes[2]), "+");
-                    case "-":
-                        return new ArithmeticOperation(expression(actual.ChildNodes[0]), expression(actual.ChildNodes[2]), "-");
-                    case "*":
-                        return new ArithmeticOperation(expression(actual.ChildNodes[0]), expression(actual.ChildNodes[2]), "*");
-                    case "/":
-                        return new ArithmeticOperation(expression(actual.ChildNodes[0]), expression(actual.ChildNodes[2]), "/");
-                    case "%":
-                        return new ArithmeticOperation(expression(actual.ChildNodes[0]), expression(actual.ChildNodes[2]), "%");
-                    case ",":
-                        return new StringOperation(expression(actual.ChildNodes[0]), expression(actual.ChildNodes[2]), ",");
-                    case "=":
-                        return new LogicOperation(expression(actual.ChildNodes[0]), expression(actual.ChildNodes[2]), "=");
-                    case "<>":
-                        return new LogicOperation(expression(actual.ChildNodes[0]), expression(actual.ChildNodes[2]), "<>");
-                    case ">":
-                        return new LogicOperation(expression(actual.ChildNodes[0]), expression(actual.ChildNodes[2]), ">");
-                    case ">=":
-                        return new LogicOperation(expression(actual.ChildNodes[0]), expression(actual.ChildNodes[2]), ">=");
-                    case "<":
-                        return new LogicOperation(expression(actual.ChildNodes[0]), expression(actual.ChildNodes[2]), "<");
-                    case "<=":
-                        return new LogicOperation(expression(actual.ChildNodes[0]), expression(actual.ChildNodes[2]), "<=");
-                    default:
-                        return null;
-                    
+                    string op = actual.ChildNodes[1].Token.Text;
+                    return ArithmeticOrLogicOperation(op, actual);
                 }
             }
             else
             {
-                switch (actual.ChildNodes[0].Token.Terminal.Name.ToLower()) 
+                if (!actual.ChildNodes[0].Term.Name.ToString().Equals("functionOrProcedureCall")) 
+                { 
+                    switch (actual.ChildNodes[0].Token.Terminal.Name.ToLower())
+                    {
+                        case "integer":
+                            return new Literal(Types.INTEGER, (object)actual.ChildNodes[0].Token.Text);
+                        case "string":
+                            return new Literal(Types.STRING, (object)actual.ChildNodes[0].Token.Text);
+                        case "real":
+                            return new Literal(Types.REAL, (object)actual.ChildNodes[0].Token.Text);
+                        case "boolean":
+                            return new Literal(Types.BOOLEAN, (object)actual.ChildNodes[0].Token.Text);
+                        case "identifier":
+                            return new Literal(Types.IDENTIFIER, actual.ChildNodes[0].Token.Text);
+                        default:
+                            throw new PascalError(0, 0, "the obtained literal doesn´t have a valid type", "Semantic Error");
+                    }
+                }
+                else 
                 {
-                    case "integer":
-                        return new Literal(Types.INTEGER, (object)actual.ChildNodes[0].Token.Text);
-                    case "string":
-                        return new Literal(Types.STRING, (object)actual.ChildNodes[0].Token.Text);
-                    case "real":
-                        return new Literal(Types.REAL, (object)actual.ChildNodes[0].Token.Text);
-                    case "boolean":
-                        return new Literal(Types.BOOLEAN, (object)actual.ChildNodes[0].Token.Text);
-                    case "identifier":
-                        return new Literal(Types.IDENTIFIER, actual.ChildNodes[0].Token.Text);
-                    default:
-                        throw new PascalError(0, 0, "the obtained literal doesn´t have a valid type", "Semantic Error");
+                    if (actual.ChildNodes[0].ChildNodes[2].ChildNodes.Count > 0) 
+                    {
+                        return new FunctionCallExpression(actual.ChildNodes[0].ChildNodes[0].Token.Text, expressions(actual.ChildNodes[0].ChildNodes[2]));
+                    }
+                    else 
+                    {
+                        return new FunctionCallExpression(actual.ChildNodes[0].ChildNodes[0].Token.Text);
+                    }
                 }
             }
         }
-        //public Operation expresion_cadena(ParseTreeNode actual)
-        //{
-        //    if (actual.ChildNodes.Count == 3)
-        //    {
-        //        return new Operacion(expresion_cadena(actual.ChildNodes.ElementAt(0)), expresion_cadena(actual.ChildNodes.ElementAt(2)), Operacion.Tipo_operacion.CONCATENACION);
-        //    }
-        //    else
-        //    {
-        //        String tokenValor = actual.ChildNodes.ElementAt(0).ToString().Split(' ')[0];
-        //        if (tokenValor.Equals("expresion_numerica"))
-        //        {
-        //            return expresion_numerica(actual.ChildNodes.ElementAt(0));
-        //        }
-        //        else
-        //        {
-        //            tokenValor = actual.ChildNodes.ElementAt(0).ToString();
-        //            return new Operacion(tokenValor.Remove(tokenValor.ToCharArray().Length - 8, 8), Operacion.Tipo_operacion.CADENA);
-        //        }
-        //    }
-        //}
 
+        public Expression ArithmeticOrLogicOperation(string op, ParseTreeNode actual) 
+        {
+            switch (op)
+            {
+                case "+":
+                    return new ArithmeticOperation(expression(actual.ChildNodes[0]), expression(actual.ChildNodes[2]), "+");
+                case "-":
+                    return new ArithmeticOperation(expression(actual.ChildNodes[0]), expression(actual.ChildNodes[2]), "-");
+                case "*":
+                    return new ArithmeticOperation(expression(actual.ChildNodes[0]), expression(actual.ChildNodes[2]), "*");
+                case "/":
+                    return new ArithmeticOperation(expression(actual.ChildNodes[0]), expression(actual.ChildNodes[2]), "/");
+                case "%":
+                    return new ArithmeticOperation(expression(actual.ChildNodes[0]), expression(actual.ChildNodes[2]), "%");
+                case ",":
+                    return new StringOperation(expression(actual.ChildNodes[0]), expression(actual.ChildNodes[2]), ",");
+                case "=":
+                    return new LogicOperation(expression(actual.ChildNodes[0]), expression(actual.ChildNodes[2]), "=");
+                case "<>":
+                    return new LogicOperation(expression(actual.ChildNodes[0]), expression(actual.ChildNodes[2]), "<>");
+                case ">":
+                    return new LogicOperation(expression(actual.ChildNodes[0]), expression(actual.ChildNodes[2]), ">");
+                case ">=":
+                    return new LogicOperation(expression(actual.ChildNodes[0]), expression(actual.ChildNodes[2]), ">=");
+                case "<":
+                    return new LogicOperation(expression(actual.ChildNodes[0]), expression(actual.ChildNodes[2]), "<");
+                case "<=":
+                    return new LogicOperation(expression(actual.ChildNodes[0]), expression(actual.ChildNodes[2]), "<=");
+                default:
+                    return null;
+
+            }
+        }
         public void generateGraph(ParseTreeNode raiz)
         {
             string graphDot = Grapher.getDot(raiz);

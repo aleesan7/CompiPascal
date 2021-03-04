@@ -17,6 +17,7 @@ namespace CompiPascal.Interpreter
             this.Instructions = Instructions;
             this._else = _else;
         }
+
         public override object execute(Environment env)
         {
             try
@@ -33,7 +34,15 @@ namespace CompiPascal.Interpreter
                     {
                         foreach (var instruccion in Instructions)
                         {
-                            instruccion.execute(env);
+                            object val = instruccion.execute(env);
+
+                            if (val != null)
+                            {
+                                //if (val.ToString().ToLower().Equals("break"))
+                                //{
+                                    return val;
+                                //}
+                            }
                         }
                     }
                     catch (Exception ex)
@@ -49,7 +58,14 @@ namespace CompiPascal.Interpreter
                         {
                             foreach (var instruccion in _else)
                             {
-                                instruccion.execute(env);
+                                object val = instruccion.execute(env);
+                                if (val != null) 
+                                {
+                                    //if (val.ToString().ToLower().Equals("break")) 
+                                    //{
+                                        return val;
+                                    //}
+                                }
                             }
                         }
                         catch (Exception ex)
