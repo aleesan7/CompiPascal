@@ -9,13 +9,18 @@ namespace CompiPascal.Interpreter
         public object value;
         public string id;
         public Type type;
+        public int line;
+        public int column;
 
-        public Symbol(object value, Type type, string id)
+        public Symbol(object value, Type type, string id, int line, int column)
         {
             this.id = id;
             this.value = value;
             this.type = type;
+            this.line = line;
+            this.column = column;
         }
+
 
         public override string ToString()
         {

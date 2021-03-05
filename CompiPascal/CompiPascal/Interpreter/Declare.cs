@@ -10,11 +10,16 @@ namespace CompiPascal.Interpreter
         private string id;
      
         private Expression value;
+
+        public int line;
+        public int column;
         
-        public Declare(string id, Expression value)
+        public Declare(string id, Expression value, int line, int column)
         {
             this.id = id;
             this.value = value;
+            this.line = line;
+            this.column = column;
         }
 
         public string GetId() 
@@ -25,6 +30,8 @@ namespace CompiPascal.Interpreter
         {
             Symbol variable = this.value.evaluate(env);
             variable.id = this.id;
+            variable.line = this.line;
+            variable.column = this.column;
             env.declareVariable(this.id, variable);
             return null;
         }

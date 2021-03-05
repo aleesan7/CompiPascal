@@ -23,7 +23,7 @@ namespace CompiPascal.Interpreter
                 {
                     Case_element tempCaseElement = (Case_element)caseElement;
                     Expression tempExpr = tempCaseElement.GetCondition();
-                    LogicOperation newExpr = new LogicOperation(this.expr, tempExpr, "=");
+                    LogicOperation newExpr = new LogicOperation(this.expr, tempExpr, "=", 0, 0);
 
                     tempCaseElement.SetCondition(newExpr);
 

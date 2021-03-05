@@ -11,32 +11,40 @@ namespace CompiPascal.Interpreter
         public LinkedList<Instruction> localVariables;
         public LinkedList<Instruction> instructions;
         public LinkedList<Expression> parameterValues;
-
+        public int line;
+        public int column;
+        
         //Procedure with parameters, local variables and instructions
-        public Procedure(string id, LinkedList<Declare> parameters, LinkedList<Instruction> localVariables, LinkedList<Instruction> instructions)
+        public Procedure(string id, LinkedList<Declare> parameters, LinkedList<Instruction> localVariables, LinkedList<Instruction> instructions, int line, int column)
         {
             this.id = id;
             this.parameters = parameters;
             this.localVariables = localVariables;
             this.instructions = instructions;
+            this.line = line;
+            this.column = column;
         }
 
         //Procedure with local variables and instructions
-        public Procedure(string id, LinkedList<Instruction> localVariables, LinkedList<Instruction> instructions)
+        public Procedure(string id, LinkedList<Instruction> localVariables, LinkedList<Instruction> instructions, int line, int column)
         {
             this.id = id;
             this.parameters = new LinkedList<Declare>();
             this.localVariables = localVariables;
             this.instructions = instructions;
+            this.line = line;
+            this.column = column;
         }
 
         //procedure with only instructions
-        public Procedure(string id, LinkedList<Instruction> instructions)
+        public Procedure(string id, LinkedList<Instruction> instructions, int line, int column)
         {
             this.id = id;
             this.parameters = new LinkedList<Declare>();
             this.localVariables = new LinkedList<Instruction>();
             this.instructions = instructions;
+            this.line = line;
+            this.column = column;
         }
 
         public void SetValuesToParameters(LinkedList<Expression> values) 

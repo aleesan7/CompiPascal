@@ -4,7 +4,7 @@ using System.Text;
 
 namespace CompiPascal.Interpreter
 {
-    class ArrayDeclare : Instruction
+    class ArrayDeclare 
     {
         private string id;
         public Symbol[] values;
@@ -29,9 +29,5 @@ namespace CompiPascal.Interpreter
             this.values[index] = value;
         }
 
-        public override object execute(Environment env)
-        {
-            throw new NotImplementedException();
-        }
     }
 }

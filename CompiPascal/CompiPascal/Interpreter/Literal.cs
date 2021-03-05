@@ -28,13 +28,13 @@ namespace CompiPascal.Interpreter
             switch (this.type) 
             {
                 case Types.INTEGER:
-                    return new Symbol(this.value, new Type(Types.INTEGER, null), null);
+                    return new Symbol(this.value, new Type(Types.INTEGER, null), null, 0, 0);
                 case Types.REAL:
-                    return new Symbol(this.value, new Type(Types.REAL, null), null);
+                    return new Symbol(this.value, new Type(Types.REAL, null), null, 0, 0);
                 case Types.STRING:
-                    return new Symbol(this.value, new Type(Types.STRING, null), null);
+                    return new Symbol(this.value, new Type(Types.STRING, null), null, 0, 0);
                 case Types.BOOLEAN:
-                    return new Symbol(this.value, new Type(Types.BOOLEAN, null), null);
+                    return new Symbol(this.value, new Type(Types.BOOLEAN, null), null, 0, 0);
                 case Types.IDENTIFIER:
                     Access accessedVar = new Access(this.id);
                     //Symbol identificador = env.ObtainVariable(this.id);

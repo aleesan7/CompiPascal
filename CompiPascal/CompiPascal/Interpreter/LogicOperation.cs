@@ -10,12 +10,16 @@ namespace CompiPascal.Interpreter
         private Expression left;
         private Expression right;
         private string tipoOperacion;
+        public int line;
+        public int column;
 
-        public LogicOperation(Expression left, Expression right, string tipoOperacion)
+        public LogicOperation(Expression left, Expression right, string tipoOperacion, int line, int column)
         {
             this.left = left;
             this.right = right;
             this.tipoOperacion = tipoOperacion;
+            this.line = line;
+            this.column = column;
         }
         public override Symbol evaluate(Environment env)
         {
@@ -33,27 +37,27 @@ namespace CompiPascal.Interpreter
                 case "=":
                     if(resultantType == Types.BOOLEAN) 
                     {
-                        result = new Symbol(left.ToString().Equals(right.ToString()), type, null);
+                        result = new Symbol(left.ToString().Equals(right.ToString()), type, null, this.line, this.column);
                     }
                     else 
                     {
-                        result = new Symbol(double.Parse(left.ToString()) == double.Parse(right.ToString()), type, null);
+                        result = new Symbol(double.Parse(left.ToString()) == double.Parse(right.ToString()), type, null, this.line, this.column);
                     }
                     return result;
                 case "<>":
-                    result = new Symbol(double.Parse(left.ToString()) != double.Parse(right.ToString()), type, null);
+                    result = new Symbol(double.Parse(left.ToString()) != double.Parse(right.ToString()), type, null, this.line, this.column);
                     return result;
                 case ">":
-                    result = new Symbol(double.Parse(left.ToString()) > double.Parse(right.ToString()), type, null);
+                    result = new Symbol(double.Parse(left.ToString()) > double.Parse(right.ToString()), type, null, this.line, this.column);
                     return result;
                 case "<":
-                    result = new Symbol(double.Parse(left.ToString()) < double.Parse(right.ToString()), type, null);
+                    result = new Symbol(double.Parse(left.ToString()) < double.Parse(right.ToString()), type, null, this.line, this.column);
                     return result;
                 case ">=":
-                    result = new Symbol(double.Parse(left.ToString()) >= double.Parse(right.ToString()), type, null);
+                    result = new Symbol(double.Parse(left.ToString()) >= double.Parse(right.ToString()), type, null, this.line, this.column);
                     return result;
                 case "<=":
-                    result = new Symbol(double.Parse(left.ToString()) <= double.Parse(right.ToString()), type, null);
+                    result = new Symbol(double.Parse(left.ToString()) <= double.Parse(right.ToString()), type, null, this.line, this.column);
                     return result;
             }
             return null;

@@ -35,7 +35,7 @@ namespace CompiPascal.Analysers
             if (!errors.HasErrors())
             {
                 generateGraph(root);
-
+                
                 LinkedList<Instruction> variableDeclaration = instructions(root.ChildNodes[2].ChildNodes[1]);
                 LinkedList<Instruction> functionAndProcedureDeclaration = instructions(root.ChildNodes[2].ChildNodes[2].ChildNodes[0].ChildNodes[0]);
                 LinkedList<Instruction> instructionsList = instructions(root.ChildNodes[2].ChildNodes[4]);
@@ -145,11 +145,11 @@ namespace CompiPascal.Analysers
                 case "var":
                     if (actual.ChildNodes.Count == 5)
                     {
-                        return new Declare(actual.ChildNodes[1].ChildNodes[0].Token.Text.ToString(), expression(actual.ChildNodes[3]));
+                        return new Declare(actual.ChildNodes[1].ChildNodes[0].Token.Text.ToString(), expression(actual.ChildNodes[3]), actual.ChildNodes[1].ChildNodes[0].Span.Location.Line, actual.ChildNodes[1].ChildNodes[0].Span.Location.Column);
                     }
                     else
                     {
-                        return new Declare(actual.ChildNodes[1].ChildNodes[0].Token.Text.ToString(), newLiteralWithDefaultValue(actual.ChildNodes[1].ChildNodes[2]));
+                        return new Declare(actual.ChildNodes[1].ChildNodes[0].Token.Text.ToString(), newLiteralWithDefaultValue(actual.ChildNodes[1].ChildNodes[2]), actual.ChildNodes[1].ChildNodes[0].Span.Location.Line, actual.ChildNodes[1].ChildNodes[0].Span.Location.Column);
                     }
                 case "writeln":
                     //return new Writeln(expression(actual.ChildNodes.ElementAt(2)));
@@ -172,8 +172,8 @@ namespace CompiPascal.Analysers
                     return new Repeat(expression(actual.ChildNodes[3]), instructions(actual.ChildNodes[1]));
                 case "for":
                     return new For(new Assign(actual.ChildNodes[1].Token.Text, expression(actual.ChildNodes[4])), 
-                        new LogicOperation(new Literal(Types.IDENTIFIER, actual.ChildNodes[1].Token.Text), newLiteralWithSetedValue(actual.ChildNodes[6]), "<="), 
-                        new Assign(actual.ChildNodes[1].Token.Text, new ArithmeticOperation(new Literal(Types.IDENTIFIER, actual.ChildNodes[1].Token.Text), new Literal(Types.INTEGER, (object)"1"), "+")),
+                        new LogicOperation(new Literal(Types.IDENTIFIER, actual.ChildNodes[1].Token.Text), newLiteralWithSetedValue(actual.ChildNodes[6]), "<=", actual.ChildNodes[1].Span.Location.Line, actual.ChildNodes[1].Span.Location.Column), 
+                        new Assign(actual.ChildNodes[1].Token.Text, new ArithmeticOperation(new Literal(Types.IDENTIFIER, actual.ChildNodes[1].Token.Text), new Literal(Types.INTEGER, (object)"1"), "+", actual.ChildNodes[1].Span.Location.Line, actual.ChildNodes[1].Span.Location.Column)),
                         instructions(actual.ChildNodes[9]));
                 case "break":
                     return new Break("break");
@@ -185,12 +185,12 @@ namespace CompiPascal.Analysers
                     if (actual.ChildNodes.Count == 12) 
                     {
                         //function with only instructions
-                        return new Function(actual.ChildNodes[1].Token.Text, GetFunctionType(actual.ChildNodes[5].ChildNodes[0].ChildNodes[0].Token.Text.ToString()), instructions(actual.ChildNodes[9]));
+                        return new Function(actual.ChildNodes[1].Token.Text, GetFunctionType(actual.ChildNodes[5].ChildNodes[0].ChildNodes[0].Token.Text.ToString()), instructions(actual.ChildNodes[9]), actual.ChildNodes[0].Span.Location.Line, actual.ChildNodes[0].Span.Location.Column);
                     }
                     else 
                     {
                         //TODO functions with parameters
-                        return new Function(actual.ChildNodes[1].Token.Text, GetFunctionType(actual.ChildNodes[6].ChildNodes[0].ChildNodes[0].Token.Text.ToString()), declares(actual.ChildNodes[3]), instructions(actual.ChildNodes[10]));
+                        return new Function(actual.ChildNodes[1].Token.Text, GetFunctionType(actual.ChildNodes[6].ChildNodes[0].ChildNodes[0].Token.Text.ToString()), declares(actual.ChildNodes[3]), instructions(actual.ChildNodes[10]), actual.ChildNodes[0].Span.Location.Line, actual.ChildNodes[0].Span.Location.Column);
                     }
                 case "procedure":
                     if (actual.ChildNodes.Count == 10)
@@ -198,19 +198,19 @@ namespace CompiPascal.Analysers
                         //Procedure with only instructions
                         if (actual.ChildNodes[5].ChildNodes.Count == 0) 
                         {
-                            return new Procedure(actual.ChildNodes[1].Token.Text, instructions(actual.ChildNodes[7]));
+                            return new Procedure(actual.ChildNodes[1].Token.Text, instructions(actual.ChildNodes[7]), actual.ChildNodes[0].Span.Location.Line, actual.ChildNodes[0].Span.Location.Column);
                         }
                         else 
                         {
                             //Procedure without parameters but with local vars and instructions
-                            return new Procedure(actual.ChildNodes[1].Token.Text, instructions(actual.ChildNodes[5]), instructions(actual.ChildNodes[7]));
+                            return new Procedure(actual.ChildNodes[1].Token.Text, instructions(actual.ChildNodes[5]), instructions(actual.ChildNodes[7]), actual.ChildNodes[0].Span.Location.Line, actual.ChildNodes[0].Span.Location.Column);
                         }
                         
                     }
                     else 
                     {
                         //Procedure with parameters, local variables and instructions
-                        return new Procedure(actual.ChildNodes[1].Token.Text, declares(actual.ChildNodes[3]), instructions(actual.ChildNodes[6]), instructions(actual.ChildNodes[8]));
+                        return new Procedure(actual.ChildNodes[1].Token.Text, declares(actual.ChildNodes[3]), instructions(actual.ChildNodes[6]), instructions(actual.ChildNodes[8]), actual.ChildNodes[0].Span.Location.Line, actual.ChildNodes[0].Span.Location.Column);
                     }
                 case "functionorprocedurecall":
                     if (actual.ChildNodes[0].ChildNodes.Count == 4)
@@ -242,11 +242,11 @@ namespace CompiPascal.Analysers
         {
             if (actual.ChildNodes.Count == 5) 
             {
-                return new Declare(actual.ChildNodes[1].Token.Text, newLiteralWithDefaultValue(actual.ChildNodes[3]));
+                return new Declare(actual.ChildNodes[1].Token.Text, newLiteralWithDefaultValue(actual.ChildNodes[3]), actual.ChildNodes[1].Span.Location.Line, actual.ChildNodes[1].Span.Location.Column);
             }
             else 
             {
-                return new Declare(actual.ChildNodes[0].Token.Text, newLiteralWithDefaultValue(actual.ChildNodes[2]));
+                return new Declare(actual.ChildNodes[0].Token.Text, newLiteralWithDefaultValue(actual.ChildNodes[2]), actual.ChildNodes[1].Span.Location.Line, actual.ChildNodes[1].Span.Location.Column);
             }
             
         }
@@ -384,29 +384,29 @@ namespace CompiPascal.Analysers
             switch (op)
             {
                 case "+":
-                    return new ArithmeticOperation(expression(actual.ChildNodes[0]), expression(actual.ChildNodes[2]), "+");
+                    return new ArithmeticOperation(expression(actual.ChildNodes[0]), expression(actual.ChildNodes[2]), "+", actual.ChildNodes[0].Span.Location.Line, actual.ChildNodes[0].Span.Location.Column);
                 case "-":
-                    return new ArithmeticOperation(expression(actual.ChildNodes[0]), expression(actual.ChildNodes[2]), "-");
+                    return new ArithmeticOperation(expression(actual.ChildNodes[0]), expression(actual.ChildNodes[2]), "-", actual.ChildNodes[0].Span.Location.Line, actual.ChildNodes[0].Span.Location.Column);
                 case "*":
-                    return new ArithmeticOperation(expression(actual.ChildNodes[0]), expression(actual.ChildNodes[2]), "*");
+                    return new ArithmeticOperation(expression(actual.ChildNodes[0]), expression(actual.ChildNodes[2]), "*", actual.ChildNodes[0].Span.Location.Line, actual.ChildNodes[0].Span.Location.Column);
                 case "/":
-                    return new ArithmeticOperation(expression(actual.ChildNodes[0]), expression(actual.ChildNodes[2]), "/");
+                    return new ArithmeticOperation(expression(actual.ChildNodes[0]), expression(actual.ChildNodes[2]), "/", actual.ChildNodes[0].Span.Location.Line, actual.ChildNodes[0].Span.Location.Column);
                 case "%":
-                    return new ArithmeticOperation(expression(actual.ChildNodes[0]), expression(actual.ChildNodes[2]), "%");
+                    return new ArithmeticOperation(expression(actual.ChildNodes[0]), expression(actual.ChildNodes[2]), "%", actual.ChildNodes[0].Span.Location.Line, actual.ChildNodes[0].Span.Location.Column);
                 case ",":
-                    return new StringOperation(expression(actual.ChildNodes[0]), expression(actual.ChildNodes[2]), ",");
+                    return new StringOperation(expression(actual.ChildNodes[0]), expression(actual.ChildNodes[2]), ",", actual.ChildNodes[0].Span.Location.Line, actual.ChildNodes[0].Span.Location.Column);
                 case "=":
-                    return new LogicOperation(expression(actual.ChildNodes[0]), expression(actual.ChildNodes[2]), "=");
+                    return new LogicOperation(expression(actual.ChildNodes[0]), expression(actual.ChildNodes[2]), "=", actual.ChildNodes[0].Span.Location.Line, actual.ChildNodes[0].Span.Location.Column);
                 case "<>":
-                    return new LogicOperation(expression(actual.ChildNodes[0]), expression(actual.ChildNodes[2]), "<>");
+                    return new LogicOperation(expression(actual.ChildNodes[0]), expression(actual.ChildNodes[2]), "<>", actual.ChildNodes[0].Span.Location.Line, actual.ChildNodes[0].Span.Location.Column);
                 case ">":
-                    return new LogicOperation(expression(actual.ChildNodes[0]), expression(actual.ChildNodes[2]), ">");
+                    return new LogicOperation(expression(actual.ChildNodes[0]), expression(actual.ChildNodes[2]), ">", actual.ChildNodes[0].Span.Location.Line, actual.ChildNodes[0].Span.Location.Column);
                 case ">=":
-                    return new LogicOperation(expression(actual.ChildNodes[0]), expression(actual.ChildNodes[2]), ">=");
+                    return new LogicOperation(expression(actual.ChildNodes[0]), expression(actual.ChildNodes[2]), ">=", actual.ChildNodes[0].Span.Location.Line, actual.ChildNodes[0].Span.Location.Column);
                 case "<":
-                    return new LogicOperation(expression(actual.ChildNodes[0]), expression(actual.ChildNodes[2]), "<");
+                    return new LogicOperation(expression(actual.ChildNodes[0]), expression(actual.ChildNodes[2]), "<", actual.ChildNodes[0].Span.Location.Line, actual.ChildNodes[0].Span.Location.Column);
                 case "<=":
-                    return new LogicOperation(expression(actual.ChildNodes[0]), expression(actual.ChildNodes[2]), "<=");
+                    return new LogicOperation(expression(actual.ChildNodes[0]), expression(actual.ChildNodes[2]), "<=", actual.ChildNodes[0].Span.Location.Line, actual.ChildNodes[0].Span.Location.Column);
                 default:
                     return null;
 
