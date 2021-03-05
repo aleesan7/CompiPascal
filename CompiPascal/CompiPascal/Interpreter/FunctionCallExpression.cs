@@ -123,9 +123,6 @@ namespace CompiPascal.Interpreter
                         {
                             returnPresent = true;
                             tempAssign = null;
-                            //returnDeclare = new Declare(funcName, tempAssign.GetValue());
-                            //returnDeclare.execute(funcOrProcEnv);
-                            //break;
                             break;
                         }
                     }
