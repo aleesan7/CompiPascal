@@ -45,6 +45,25 @@ namespace CompiPascal.Interpreter
             {
                 Function func = env.ObtainFunction(this.id);
 
+                //We set up a var with the same name as the function in order to return a value
+                switch (func.GetFunctionType()) 
+                {
+                    case Function.FunctionTypes.BOOLEAN:
+                        funcOrProcEnv.declareVariable(this.id, new Symbol(null, new Type(Types.BOOLEAN, null), this.id, 0, 0));
+                        break;
+                    case Function.FunctionTypes.INTEGER:
+                        funcOrProcEnv.declareVariable(this.id, new Symbol(null, new Type(Types.INTEGER, null), this.id, 0, 0));
+                        break;
+                    case Function.FunctionTypes.STRING:
+                        funcOrProcEnv.declareVariable(this.id, new Symbol(null, new Type(Types.STRING, null), this.id, 0, 0));
+                        break;
+                    case Function.FunctionTypes.REAL:
+                        funcOrProcEnv.declareVariable(this.id, new Symbol(null, new Type(Types.REAL, null), this.id, 0, 0));
+                        break;
+
+                }
+
+
 
                 if (func.localVariables.Count > 0)
                 {
@@ -89,9 +108,9 @@ namespace CompiPascal.Interpreter
                 //We obtain the id of the function
                 string funcName = func.id;
                 bool returnPresent = false;
-                object retVal = null;
+                object val = null;
                 Assign tempAssign;
-                Exit tempExit;
+
 
                 //Then we need to determine if the function has it´s 'return' statement, if not, we throw an exception indicating that a return is expected
                 foreach (Instruction ins in func.instructions)
@@ -107,6 +126,7 @@ namespace CompiPascal.Interpreter
                             //returnDeclare = new Declare(funcName, tempAssign.GetValue());
                             //returnDeclare.execute(funcOrProcEnv);
                             //break;
+                            break;
                         }
                     }
                 }
@@ -118,37 +138,16 @@ namespace CompiPascal.Interpreter
 
                 foreach (Instruction instruction in func.instructions)
                 {
-                    if (instruction.GetType().Name.ToString().ToLower().Equals("assign"))
-                    {
-                        tempAssign = (Assign)instruction;
+                    val = instruction.execute(funcOrProcEnv);
 
-                        if (tempAssign.GetId().Equals(funcName))
-                        {
-                            //If we have reached the return, then we return the value
-                            return tempAssign.GetValue().evaluate(funcOrProcEnv);
-                        }
-                        else 
-                        {
-                            instruction.execute(funcOrProcEnv);
-                        }
-                    }
-                    else 
+                    if (val != null) 
                     {
-                        if (instruction.GetType().Name.ToString().ToLower().Equals("exit"))
-                        {
-                            tempExit = (Exit)instruction;
-
-                            return tempExit.GetValue().evaluate(funcOrProcEnv);
-                        }
-                        else 
-                        {
-                            instruction.execute(funcOrProcEnv);
-                        }
+                        return funcOrProcEnv.ObtainVariable(this.id);
                     }
                 }
             }
 
-            return returnVar.evaluate(funcOrProcEnv);
+            return funcOrProcEnv.ObtainVariable(this.id);
         }
     }
 }

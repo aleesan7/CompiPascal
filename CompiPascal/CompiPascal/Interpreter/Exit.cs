@@ -22,6 +22,7 @@ namespace CompiPascal.Interpreter
 
         public override object execute(Environment env)
         {
+            env.assignVariableValue(env.GetEnvName(), this.value.evaluate(env));
             return this.value.evaluate(env);
         }
     }
