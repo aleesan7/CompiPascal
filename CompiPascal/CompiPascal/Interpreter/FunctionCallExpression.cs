@@ -29,6 +29,8 @@ namespace CompiPascal.Interpreter
             Environment globalEnv = env.GetGlobalEnvironment();
             Environment funcOrProcEnv = new Environment(globalEnv);
 
+            funcOrProcEnv.SetEnvName(this.id);
+
             if (globalEnv.ObtainFunction(this.id) != null)
             {
                 isFunction = true;

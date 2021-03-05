@@ -9,6 +9,7 @@ namespace CompiPascal.Utils
         private int line, column;
         private string message;
         private string type;
+        private string environment;
 
         public PascalError(int line, int column, string message, string type)
         {

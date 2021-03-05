@@ -11,6 +11,7 @@ namespace CompiPascal.Interpreter
         Dictionary<string, Procedure> procedures;
         Dictionary<string, object> structs;
         Environment parent;
+        private string environmentName;
 
         public Environment(Environment parent)
         {
@@ -18,6 +19,16 @@ namespace CompiPascal.Interpreter
             this.variables = new Dictionary<string, Symbol>();
             this.functions = new Dictionary<string, Function>();
             this.procedures = new Dictionary<string, Procedure>();
+        }
+
+        public string GetEnvName() 
+        {
+            return this.environmentName;
+        }
+
+        public void SetEnvName(string name) 
+        {
+            this.environmentName = name;
         }
 
         public void declareVariable(string id, Symbol variable)
@@ -68,6 +79,21 @@ namespace CompiPascal.Interpreter
         public Dictionary<string, Symbol> GetVariables() 
         {
             return this.variables;
+        }
+
+        public Dictionary<string, Function> GetFunctions() 
+        {
+            return this.functions;
+        }
+
+        public Dictionary<string, Procedure> GetProcedures()
+        {
+            return this.procedures;
+        }
+
+        public Environment GetParent() 
+        {
+            return this.parent;
         }
 
         public bool VariableExists(string id)

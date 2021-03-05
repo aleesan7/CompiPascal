@@ -61,6 +61,7 @@ namespace CompiPascal.Analysers
         public void execute(LinkedList<Instruction> variables, LinkedList<Instruction> functionsAndProcedures, LinkedList<Instruction> instructions)
         {
             Interpreter.Environment global = new Interpreter.Environment(null);
+            global.SetEnvName("global");
 
             foreach (var variable in variables)
             {
@@ -134,7 +135,7 @@ namespace CompiPascal.Analysers
 
         public Instruction caseElement(ParseTreeNode actual) 
         {
-            return new Case_element(expression(actual.ChildNodes[0]), instruction(actual.ChildNodes[2]));
+            return new Case_element(expression(actual.ChildNodes[0]), instruction(actual.ChildNodes[2]), actual.ChildNodes[0].Span.Location.Line, actual.ChildNodes[0].Span.Location.Column);
         }
 
         public Instruction instruction(ParseTreeNode actual)
@@ -160,21 +161,21 @@ namespace CompiPascal.Analysers
                 case "instruccion_if_sup":
                     if (actual.ChildNodes[0].ChildNodes.Count == 1)
                     {
-                        return new If(expression(actual.ChildNodes[0].ChildNodes[0].ChildNodes[2]), instructions(actual.ChildNodes[0].ChildNodes[0].ChildNodes[6]), null);
+                        return new If(expression(actual.ChildNodes[0].ChildNodes[0].ChildNodes[2]), instructions(actual.ChildNodes[0].ChildNodes[0].ChildNodes[6]), null, actual.ChildNodes[0].Span.Location.Line, actual.ChildNodes[0].Span.Location.Column);
                     }
                     else
                     {
-                        return new If(expression(actual.ChildNodes[0].ChildNodes[0].ChildNodes[2]), instructions(actual.ChildNodes[0].ChildNodes[0].ChildNodes[6]), instructions(actual.ChildNodes[0].ChildNodes[1].ChildNodes[2]));
+                        return new If(expression(actual.ChildNodes[0].ChildNodes[0].ChildNodes[2]), instructions(actual.ChildNodes[0].ChildNodes[0].ChildNodes[6]), instructions(actual.ChildNodes[0].ChildNodes[1].ChildNodes[2]), actual.ChildNodes[0].Span.Location.Line, actual.ChildNodes[0].Span.Location.Column);
                     }
                 case "while":
-                    return new While(expression(actual.ChildNodes[1]), instructions(actual.ChildNodes[4]));
+                    return new While(expression(actual.ChildNodes[1]), instructions(actual.ChildNodes[4]), actual.ChildNodes[0].Span.Location.Line, actual.ChildNodes[0].Span.Location.Column);
                 case "repeat":
-                    return new Repeat(expression(actual.ChildNodes[3]), instructions(actual.ChildNodes[1]));
+                    return new Repeat(expression(actual.ChildNodes[3]), instructions(actual.ChildNodes[1]), actual.ChildNodes[0].Span.Location.Line, actual.ChildNodes[0].Span.Location.Column);
                 case "for":
                     return new For(new Assign(actual.ChildNodes[1].Token.Text, expression(actual.ChildNodes[4])), 
                         new LogicOperation(new Literal(Types.IDENTIFIER, actual.ChildNodes[1].Token.Text), newLiteralWithSetedValue(actual.ChildNodes[6]), "<=", actual.ChildNodes[1].Span.Location.Line, actual.ChildNodes[1].Span.Location.Column), 
                         new Assign(actual.ChildNodes[1].Token.Text, new ArithmeticOperation(new Literal(Types.IDENTIFIER, actual.ChildNodes[1].Token.Text), new Literal(Types.INTEGER, (object)"1"), "+", actual.ChildNodes[1].Span.Location.Line, actual.ChildNodes[1].Span.Location.Column)),
-                        instructions(actual.ChildNodes[9]));
+                        instructions(actual.ChildNodes[9]), actual.ChildNodes[0].Span.Location.Line, actual.ChildNodes[0].Span.Location.Column);
                 case "break":
                     return new Break("break");
                 case "continue":
@@ -224,6 +225,8 @@ namespace CompiPascal.Analysers
                     }
                 case "case_statement":
                     return new Case(expression(actual.ChildNodes[0].ChildNodes[1]), caseelements(actual.ChildNodes[0].ChildNodes[3]));
+                case "graficar_ts":
+                    return new Graphts();
                 default:
                     
                     if (actual.ChildNodes.Count == 5  || actual.ChildNodes.Count == 4) //var assignment
@@ -281,7 +284,7 @@ namespace CompiPascal.Analysers
                 case "boolean":
                     return new Literal(Types.BOOLEAN, (object)false);
                 default:
-                    throw new PascalError(0, 0, "the obtained literal doesn´t have a valid type", "Semantic Error");
+                    throw new PascalError(actual.ChildNodes[0].Span.Location.Line, actual.ChildNodes[0].Span.Location.Column, "the obtained literal doesn´t have a valid type", "Semantic Error");
             }
         }
 
@@ -300,7 +303,7 @@ namespace CompiPascal.Analysers
                 case "identifier":
                     return new Literal(Types.IDENTIFIER, actual.ChildNodes[0].Token.Text);
                 default:
-                    throw new PascalError(0, 0, "the obtained literal doesn´t have a valid type", "Semantic Error");
+                    throw new PascalError(actual.ChildNodes[0].Span.Location.Line, actual.ChildNodes[0].Span.Location.Column, "the obtained literal doesn´t have a valid type", "Semantic Error");
             }
         }
 
@@ -319,7 +322,7 @@ namespace CompiPascal.Analysers
                 case "identifier":
                     return new Literal(Types.IDENTIFIER, (object)value);
                 default:
-                    throw new PascalError(0, 0, "the obtained literal doesn´t have a valid type", "Semantic Error");
+                    throw new PascalError(actual.ChildNodes[0].Span.Location.Line, actual.ChildNodes[0].Span.Location.Column, "the obtained literal doesn´t have a valid type", "Semantic Error");
             }
         }
 
@@ -362,7 +365,7 @@ namespace CompiPascal.Analysers
                         case "identifier":
                             return new Literal(Types.IDENTIFIER, actual.ChildNodes[0].Token.Text);
                         default:
-                            throw new PascalError(0, 0, "the obtained literal doesn´t have a valid type", "Semantic Error");
+                            throw new PascalError(actual.ChildNodes[0].Span.Location.Line, actual.ChildNodes[0].Span.Location.Column, "the obtained literal doesn´t have a valid type", "Semantic Error");
                     }
                 }
                 else 

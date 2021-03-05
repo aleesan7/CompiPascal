@@ -73,6 +73,11 @@ namespace CompiPascal.Interpreter
             this.column = column;
         }
 
+        public FunctionTypes GetFunctionType() 
+        {
+            return this.functionType;
+        }
+
         public void SetValuesToParameters(LinkedList<Expression> values)
         {
             this.parameterValues = values;

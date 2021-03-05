@@ -9,11 +9,15 @@ namespace CompiPascal.Interpreter
     {
         private Expression condition;
         private LinkedList<Instruction> instructions;
+        public int line;
+        public int column;
 
-        public Repeat(Expression condition, LinkedList<Instruction> instructions)
+        public Repeat(Expression condition, LinkedList<Instruction> instructions, int line, int column)
         {
             this.condition = condition;
             this.instructions = instructions;
+            this.line = line;
+            this.column = column;
         }
 
         public override object execute(Environment env)
@@ -22,7 +26,7 @@ namespace CompiPascal.Interpreter
             object val = null;
             //TODO verificar errores
             if (value.type.type != Types.BOOLEAN)
-                throw new PascalError(0, 0, "The condition for the if isn´t boolean", "Semantic");
+                throw new PascalError(this.line, this.column, "The condition for the if isn´t boolean", "Semantic");
 
             do 
             {

@@ -31,7 +31,7 @@ namespace CompiPascal.Interpreter
 
             Types resultantType = TypesTable.getType(left.type, right.type);
             if (resultantType == Types.ERROR)
-                throw new PascalError(0, 0, "Incorrect data type", "Semantic");
+                throw new PascalError(this.line, this.column, "Incorrect data type", "Semantic");
 
             switch (operationType)
             {

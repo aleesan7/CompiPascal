@@ -10,12 +10,16 @@ namespace CompiPascal.Interpreter
         private Expression value;
         private LinkedList<Instruction> Instructions;
         private LinkedList<Instruction> _else;
+        public int line;
+        public int column;
 
-        public If(Expression value, LinkedList<Instruction> Instructions, LinkedList<Instruction> _else)
+        public If(Expression value, LinkedList<Instruction> Instructions, LinkedList<Instruction> _else, int line, int column)
         {
             this.value = value;
             this.Instructions = Instructions;
             this._else = _else;
+            this.line = line;
+            this.column = column;
         }
 
         public override object execute(Environment env)
@@ -26,7 +30,7 @@ namespace CompiPascal.Interpreter
 
                 //TODO verificar errores
                 if (value.type.type != Types.BOOLEAN)
-                    throw new PascalError(0, 0, "The condition for the if isn´t boolean", "Semantic");
+                    throw new PascalError(this.line, this.column, "The condition for the if isn´t boolean", "Semantic");
 
                 if (bool.Parse(value.value.ToString()))
                 {

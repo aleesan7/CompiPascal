@@ -9,11 +9,15 @@ namespace CompiPascal.Interpreter
     {
         private Expression condition;
         private Instruction instruction;
+        public int line;
+        public int column;
 
-        public Case_element(Expression condition, Instruction instruction)
+        public Case_element(Expression condition, Instruction instruction, int line, int column)
         {
             this.condition = condition;
             this.instruction = instruction;
+            this.line = line;
+            this.column = column;
         }
 
         public Expression GetCondition() 
@@ -34,7 +38,7 @@ namespace CompiPascal.Interpreter
 
                 //TODO verificar errores
                 if (value.type.type != Types.BOOLEAN)
-                    throw new PascalError(0, 0, "The condition for the if isn´t boolean", "Semantic");
+                    throw new PascalError(this.line, this.column, "The condition for the if isn´t boolean", "Semantic");
 
                 if (bool.Parse(value.value.ToString()))
                 {
