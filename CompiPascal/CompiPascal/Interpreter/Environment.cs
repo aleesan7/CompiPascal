@@ -59,7 +59,7 @@ namespace CompiPascal.Interpreter
                 }
                 else 
                 {
-                    throw new Exception("The variable " + id + " doesn´t exist, so an assignation isn´t possible.");
+                    throw new Exception("The variable " + id + " doesn´t exist, so an assignment isn´t possible.");
                 }
             }
         }
