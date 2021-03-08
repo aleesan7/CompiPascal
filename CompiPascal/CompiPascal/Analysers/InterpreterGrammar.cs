@@ -212,10 +212,12 @@ namespace CompiPascal.Analysers
             range.Rule = expresion + DOUBLEDOT + expresion;
             range.ErrorRule = SyntaxError + DOUBLEDOT; ;
 
-            dimensiones.Rule = dimensiones + LEFTBRAC + expresion + RIGHTBRAC //{:RESULT = a; RESULT.add(b);:}
-                     | LEFTBRAC + expresion + RIGHTBRAC; //{:RESULT = new LinkedList<>(); RESULT.add(a);:}
-            dimensiones.ErrorRule = SyntaxError + LEFTBRAC
-                       | SyntaxError + RIGHTBRAC;
+            //dimensiones.Rule = dimensiones + LEFTBRAC + expresion + RIGHTBRAC //{:RESULT = a; RESULT.add(b);:}
+            //         | LEFTBRAC + expresion + RIGHTBRAC; //{:RESULT = new LinkedList<>(); RESULT.add(a);:}
+            //dimensiones.ErrorRule = SyntaxError + LEFTBRAC
+            //           | SyntaxError + RIGHTBRAC;
+
+            dimensiones.Rule = MakePlusRule(dimensiones, COMMA, expresion);
 
             expresiones.Rule = MakeListRule(expresiones, COMMA, expresion)
                       | Empty;
@@ -230,7 +232,8 @@ namespace CompiPascal.Analysers
                      //| VAR + declaracion  //{:RESULT = a;:}
                      | identifier + COLON + EQUAL + expresion + SEMICOLON //{:RESULT = new Asignacion(a, b);:}
                      | identifier + COLON + EQUAL + expresion
-                     | identifier + dimensiones + COLON + EQUAL + expresion + SEMICOLON //{:RESULT = new AsignacionArreglo(a, b, c);:}
+                     //| identifier + dimensiones + COLON + EQUAL + expresion + SEMICOLON //{:RESULT = new AsignacionArreglo(a, b, c);:}
+                     | identifier + LEFTBRAC + dimensiones + RIGHTBRAC + COLON + EQUAL + expresion + SEMICOLON
                      | instruccion_if_sup  //{:RESULT = a;:}
                      | WHILE + expresion + DO + BEGIN + instrucciones + END + SEMICOLON //{:RESULT = new While(a, b);:}
                      | FOR + identifier + COLON + EQUAL + expresion + TO + expresion + DO + BEGIN + instrucciones + END + SEMICOLON
@@ -306,7 +309,7 @@ namespace CompiPascal.Analysers
                                                               //| identifier + LEFTPAREN + expresion + RIGHTPAREN //{:RESULT = new LlamadaFuncion(a, b);:}
                                                               //| identifier + LEFTPAREN + RIGHTPAREN               //{:RESULT = new LlamadaFuncion(a, new LinkedList<>());:}
                  | functionOrProcedureCall
-                 | identifier + dimensiones;                  //{:RESULT = new AccesoArreglo(a, b);:}
+                 | identifier + LEFTBRAC + dimensiones + RIGHTBRAC;                  //{:RESULT = new AccesoArreglo(a, b);:}
 
 
 

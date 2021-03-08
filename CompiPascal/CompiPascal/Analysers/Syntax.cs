@@ -138,9 +138,25 @@ namespace CompiPascal.Analysers
             return expressionList;
         }
 
+        public LinkedList<Interpreter.Range> ranges(ParseTreeNode actual) 
+        {
+            LinkedList<Interpreter.Range> rangesList = new LinkedList<Interpreter.Range>();
+            foreach(ParseTreeNode node in actual.ChildNodes) 
+            {
+                rangesList.AddLast(range(node));
+            }
+
+            return rangesList;
+        }
+
         public Instruction caseElement(ParseTreeNode actual) 
         {
             return new Case_element(expression(actual.ChildNodes[0]), instruction(actual.ChildNodes[2]), actual.ChildNodes[0].Span.Location.Line, actual.ChildNodes[0].Span.Location.Column);
+        }
+
+        public Interpreter.Range range (ParseTreeNode actual) 
+        {
+            return new Interpreter.Range(expression(actual.ChildNodes[0]), expression(actual.ChildNodes[2]));
         }
 
         public Instruction instruction(ParseTreeNode actual)
@@ -155,7 +171,24 @@ namespace CompiPascal.Analysers
                     }
                     else
                     {
-                        return new Declare(actual.ChildNodes[1].ChildNodes[0].Token.Text.ToString(), newLiteralWithDefaultValue(actual.ChildNodes[1].ChildNodes[2]), actual.ChildNodes[1].ChildNodes[0].Span.Location.Line, actual.ChildNodes[1].ChildNodes[0].Span.Location.Column);
+                        if(actual.ChildNodes.Count == 3) 
+                        {
+                            if(actual.ChildNodes[1].ChildNodes.Count == 1) 
+                            {
+                                string type = actual.ChildNodes[1].ChildNodes[0].ChildNodes[7].ChildNodes[0].Token.Text.ToString();
+
+
+                                return new ArrayDeclare(actual.ChildNodes[1].ChildNodes[0].ChildNodes[0].Token.Text.ToString(), new Interpreter.Type(GetVarType(type), null), ranges(actual.ChildNodes[1].ChildNodes[0].ChildNodes[4]), actual.ChildNodes[1].ChildNodes[0].ChildNodes[0].Span.Location.Line, actual.ChildNodes[1].ChildNodes[0].ChildNodes[0].Span.Location.Column);
+                            }
+                            else 
+                            {
+                                return new Declare(actual.ChildNodes[1].ChildNodes[0].Token.Text.ToString(), newLiteralWithDefaultValue(actual.ChildNodes[1].ChildNodes[2]), actual.ChildNodes[1].ChildNodes[0].Span.Location.Line, actual.ChildNodes[1].ChildNodes[0].Span.Location.Column);
+                            }
+                        }
+                        else 
+                        {
+                            return null;
+                        }
                     }
                 case "writeln":
                     //return new Writeln(expression(actual.ChildNodes.ElementAt(2)));
@@ -241,7 +274,7 @@ namespace CompiPascal.Analysers
                     else
                     {
                         //TODO array assignment
-                        return null;
+                        return new ArrayAssign(actual.ChildNodes[0].Token.Text, expression(actual.ChildNodes[6]), expressions(actual.ChildNodes[2]));
                     }
             }
         }
@@ -273,6 +306,23 @@ namespace CompiPascal.Analysers
                     return Function.FunctionTypes.BOOLEAN;
                 default:
                     return Function.FunctionTypes.VOID;
+            }
+        }
+
+        private Types GetVarType(string type) 
+        {
+            switch (type.ToLower()) 
+            {
+                case "integer":
+                    return Types.INTEGER;
+                case "string":
+                    return Types.STRING;
+                case "real":
+                    return Types.REAL;
+                case "boolean":
+                    return Types.BOOLEAN;
+                default:
+                    return Types.ERROR;
             }
         }
 
@@ -368,7 +418,16 @@ namespace CompiPascal.Analysers
                         case "boolean":
                             return new Literal(Types.BOOLEAN, (object)actual.ChildNodes[0].Token.Text);
                         case "identifier":
-                            return new Literal(Types.IDENTIFIER, actual.ChildNodes[0].Token.Text);
+                            if(actual.ChildNodes.Count == 1)  // Simple var expression
+                            {
+                                return new Literal(Types.IDENTIFIER, actual.ChildNodes[0].Token.Text);
+                            }
+                            else 
+                            {
+                                //Array var expression
+                                return new ArrayAccess(actual.ChildNodes[0].Token.Text, expressions(actual.ChildNodes[2]));
+                            }
+                            
                         default:
                             throw new PascalError(actual.ChildNodes[0].Span.Location.Line, actual.ChildNodes[0].Span.Location.Column, "the obtained literal doesn´t have a valid type", "Semantic Error");
                     }

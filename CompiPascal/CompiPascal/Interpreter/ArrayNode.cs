@@ -52,7 +52,7 @@ namespace CompiPascal.Interpreter
          * @param val Valor que se le quiere asignar a cierta celda del arreglo
          * @param id Identificador del arreglo
          */
-        public void setValor(int indexesAmount, int actualIndex, LinkedList<int> indexes, Object val, String id)
+        public void SetValue(int indexesAmount, int actualIndex, LinkedList<int> indexes, Object val, String id)
         {
             int valIndiceActual = indexes.ElementAt(actualIndex - 1);
             if (valIndiceActual < nextCells.Count && valIndiceActual >= 0)
@@ -64,7 +64,7 @@ namespace CompiPascal.Interpreter
                 }
                 else
                 {
-                    arr.setValor(indexesAmount, actualIndex + 1, indexes, val, id);
+                    arr.SetValue(indexesAmount, actualIndex + 1, indexes, val, id);
                 }
             }
             else
@@ -83,7 +83,7 @@ namespace CompiPascal.Interpreter
          * @param id Identificador del arreglo
          * @return El value almacenado por la celda específica o null en caso no lo encuentre
          */
-        Object getValor(int indexesAmount, int actualIndex, LinkedList<int> indexes, String id)
+        public object GetValue(int indexesAmount, int actualIndex, LinkedList<int> indexes, String id)
         {
             int valIndiceActual = indexes.ElementAt(actualIndex - 1);
             if (valIndiceActual < nextCells.Count && valIndiceActual >= 0)
@@ -95,7 +95,7 @@ namespace CompiPascal.Interpreter
                 }
                 else
                 {
-                    return arr.getValor(indexesAmount, actualIndex + 1, indexes, id);
+                    return arr.GetValue(indexesAmount, actualIndex + 1, indexes, id);
                 }
             }
             else

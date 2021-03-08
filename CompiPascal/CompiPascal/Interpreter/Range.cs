@@ -9,20 +9,21 @@ namespace CompiPascal.Interpreter
         private Expression expSup;
         private Expression expInf;
 
-        public Range(Expression expSup, Expression expInf)
+        public Range(Expression expInf, Expression expSup)
         {
-            this.expSup = expSup;
             this.expInf = expInf;
+            this.expSup = expSup;
+        }
+
+        public Expression GetInfExpression()
+        {
+            return this.expInf;
         }
 
         public Expression GetSupExpression() 
         {
             return this.expSup;
         }
-
-        public Expression GetInfExpression() 
-        {
-            return this.expInf;
-        }
+        
     }
 }

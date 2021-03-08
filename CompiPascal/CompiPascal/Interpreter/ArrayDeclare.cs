@@ -42,6 +42,10 @@ namespace CompiPascal.Interpreter
                 {
                     size = int.Parse(supVal.value.ToString()) + (int.Parse(infVal.value.ToString()) * -1);
                 }
+                else 
+                {
+                    size = int.Parse(infVal.value.ToString()) + int.Parse(supVal.value.ToString()) - 1;
+                }
 
                 dimentionsSizes.AddLast(size);
             }

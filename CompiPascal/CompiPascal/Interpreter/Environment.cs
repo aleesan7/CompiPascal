@@ -64,6 +64,66 @@ namespace CompiPascal.Interpreter
             }
         }
 
+        public void AssignArrayValue(string id, object value, LinkedList<int> indexes) 
+        {
+            Environment actual = this;
+            while (actual != null)
+            {
+                if (actual.variables.ContainsKey(id)) 
+                {
+                    actual.variables[id].SetValue(value, indexes);
+                    return;
+                }
+                actual = actual.parent;
+            };
+
+            //foreach (KeyValuePair<string, Symbol> variable in this.variables)
+            //{
+            //    if (variable.Key.ToString().Equals(id)) 
+            //    {
+            //        variable.Value.SetValue(value, indexes);
+            //        return;
+            //    }
+            //}
+
+            throw new CompiPascal.Utils.PascalError(0, 0, "The variable " + id + " doesn´t exist in the current environment, and for that reason "
+                + "a value cannot be assigned.", "Semantic");
+
+        }
+
+        public Symbol GetArrayValue(string id, LinkedList<int> indexes)
+        {
+            Environment actual = this;
+            while (actual != null)
+            {
+                if (actual.variables.ContainsKey(id)) 
+                {
+                    Symbol tempSymbol = this.ObtainVariable(id);
+                    Symbol symbolToReturn = new Symbol(tempSymbol.GetValue(id, indexes), tempSymbol.type, tempSymbol.id, tempSymbol.line, tempSymbol.column);
+                    
+                    return symbolToReturn;
+                }
+                actual = actual.parent;
+            };
+
+            //foreach (KeyValuePair<string, Symbol> variable in this.variables)
+            //{
+            //    if (variable.Key.ToString().Equals(id))
+            //    {
+            //        Symbol tempSymbol = this.ObtainVariable(id);
+            //        Symbol symbolToReturn = new Symbol(variable.Value.GetValue(id, indexes), tempSymbol.type, tempSymbol.id, tempSymbol.line, tempSymbol.column);
+
+            //        return symbolToReturn;
+                    
+            //    }
+            //}
+
+            throw new CompiPascal.Utils.PascalError(0, 0, "The variable " + id + " doesn´t exist in the current environment, and for that reason "
+                + "a value cannot be accessed.", "Semantic");
+
+            
+        }
+
         public Symbol ObtainVariable(string id)
         {
             Environment actual = this;
