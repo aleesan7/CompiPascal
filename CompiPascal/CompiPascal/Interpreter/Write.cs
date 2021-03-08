@@ -11,6 +11,7 @@ namespace CompiPascal.Interpreter
         public Write(LinkedList<Expression> content)
         {
             this.content = content;
+            this.results = new LinkedList<string>();
         }
 
         public override object execute(Environment env)
@@ -23,6 +24,7 @@ namespace CompiPascal.Interpreter
                 toWrite = expression.evaluate(env);
                 finalResult = finalResult + toWrite.value.ToString();
             }
+            results.AddLast(finalResult);
             System.Diagnostics.Debug.Write(finalResult);
             return null;
         }

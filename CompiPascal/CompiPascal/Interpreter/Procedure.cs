@@ -23,6 +23,7 @@ namespace CompiPascal.Interpreter
             this.instructions = instructions;
             this.line = line;
             this.column = column;
+            this.results = new LinkedList<string>();
         }
 
         //Procedure with local variables and instructions
@@ -34,6 +35,7 @@ namespace CompiPascal.Interpreter
             this.instructions = instructions;
             this.line = line;
             this.column = column;
+            this.results = new LinkedList<string>();
         }
 
         //procedure with only instructions
@@ -45,6 +47,7 @@ namespace CompiPascal.Interpreter
             this.instructions = instructions;
             this.line = line;
             this.column = column;
+            this.results = new LinkedList<string>();
         }
 
         public void SetValuesToParameters(LinkedList<Expression> values) 

@@ -36,9 +36,9 @@ namespace CompiPascal
             }
             if (syntax.errorsList.Count > 0) 
             {
-                foreach(string error in syntax.errorsList) 
+                foreach(CompiPascal.Utils.PascalError error in syntax.errorsList) 
                 {
-                    txtOutputEditor.Text += error;
+                    txtOutputEditor.Text += error.GetMesage();
                     txtOutputEditor.Text += Environment.NewLine;
                 }
             }

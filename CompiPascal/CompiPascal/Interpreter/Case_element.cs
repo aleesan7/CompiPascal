@@ -18,6 +18,7 @@ namespace CompiPascal.Interpreter
             this.instruction = instruction;
             this.line = line;
             this.column = column;
+            this.results = new LinkedList<string>();
         }
 
         public Expression GetCondition() 
@@ -45,6 +46,15 @@ namespace CompiPascal.Interpreter
                     try
                     {
                         object val = this.instruction.execute(env);
+
+                        if (instruction.results.Count > 0)
+                        {
+                            foreach (string result in instruction.results)
+                            {
+                                this.results.AddLast(result);
+                            }
+                            instruction.results.Clear();
+                        }
 
                         if (val != null)
                         {

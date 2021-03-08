@@ -13,6 +13,7 @@ namespace CompiPascal.Interpreter
         {
             this.expr = expr;
             this.caseElements = caseElements;
+            this.results = new LinkedList<string>();
         }
 
         public override object execute(Environment env)

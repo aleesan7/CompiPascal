@@ -20,6 +20,7 @@ namespace CompiPascal.Interpreter
             this._else = _else;
             this.line = line;
             this.column = column;
+            this.results = new LinkedList<string>();
         }
 
         public override object execute(Environment env)
@@ -39,6 +40,16 @@ namespace CompiPascal.Interpreter
                         foreach (var instruccion in Instructions)
                         {
                             object val = instruccion.execute(env);
+
+                            
+                            if (instruccion.results.Count> 0) 
+                            {
+                                foreach(string result in instruccion.results) 
+                                {
+                                    this.results.AddLast(result);
+                                }
+                                instruccion.results.Clear();
+                            }
 
                             if (val != null)
                             {
@@ -63,6 +74,16 @@ namespace CompiPascal.Interpreter
                             foreach (var instruccion in _else)
                             {
                                 object val = instruccion.execute(env);
+
+                                if (instruccion.results.Count > 0)
+                                {
+                                    foreach (string result in instruccion.results)
+                                    {
+                                        this.results.AddLast(result);
+                                    }
+                                    instruccion.results.Clear();
+                                }
+
                                 if (val != null) 
                                 {
                                     //if (val.ToString().ToLower().Equals("break")) 

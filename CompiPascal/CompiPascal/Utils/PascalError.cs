@@ -19,6 +19,11 @@ namespace CompiPascal.Utils
             this.type = type;
         }
 
+        public string GetMesage() 
+        {
+            return this.message;
+        }
+
         public override string ToString()
         {
             return "An error was found: " + this.type + " - in the line: " + this.line + " - in the column: " + this.column + " - message: " + this.message;

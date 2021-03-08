@@ -13,7 +13,9 @@ namespace CompiPascal.Analysers
     class Syntax
     {
         public List<string> resultsList = new List<string>();
-        public List<string> errorsList = new List<string>();
+        public List<CompiPascal.Utils.PascalError> errorsList = new List<CompiPascal.Utils.PascalError>();
+        public static string strResult = "";
+
         public void Analyze(string input)
         {
 
@@ -78,14 +80,17 @@ namespace CompiPascal.Analysers
                 try
                 {
                     object execution = instruction.execute(global);
-                    if (execution != null)
+                    if (instruction.results.Count > 0)
                     {
-                        resultsList.Add(execution.ToString());
+                        foreach(string result in instruction.results) 
+                        {
+                            resultsList.Add(result);
+                        }
                     }
                 }
-                catch (Exception ex)
+                catch (CompiPascal.Utils.PascalError ex)
                 {
-                    errorsList.Add(ex.Message);
+                    errorsList.Add(ex);
                 }
             }
         }

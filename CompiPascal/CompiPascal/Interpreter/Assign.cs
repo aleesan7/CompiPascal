@@ -13,6 +13,7 @@ namespace CompiPascal.Interpreter
         {
             this.id = id;
             this.value = value;
+            this.results = new LinkedList<string>();
         }
 
         public string GetId() 
@@ -32,7 +33,17 @@ namespace CompiPascal.Interpreter
 
         public override object execute(Environment env)
         {
-            env.assignVariableValue(this.id, this.value.evaluate(env));
+            Symbol tempVar = env.ObtainVariable(this.id);
+            Symbol value = this.value.evaluate(env);
+            
+            if(tempVar.type.type == value.type.type) 
+            {
+                env.assignVariableValue(this.id, this.value.evaluate(env));
+            }
+            else 
+            {
+                throw new CompiPascal.Utils.PascalError(tempVar.line, tempVar.column, "The assignation can´t be done since you´re trying to assign a " + value.type.type + " value (" + value.value.ToString() + ") to a " + tempVar.type.type + " variable (" + tempVar.id + ")", "Semantic");
+            }
             return null;
         }
     }

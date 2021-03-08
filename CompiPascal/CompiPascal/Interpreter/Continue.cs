@@ -11,6 +11,7 @@ namespace CompiPascal.Interpreter
         public Continue(string type)
         {
             this.type = type;
+            this.results = new LinkedList<string>();
         }
 
         public override object execute(Environment env)

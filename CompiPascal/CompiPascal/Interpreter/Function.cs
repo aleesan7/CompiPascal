@@ -35,6 +35,7 @@ namespace CompiPascal.Interpreter
             this.instructions = instructions;
             this.line = line;
             this.column = column;
+            this.results = new LinkedList<string>();
         }
 
         //Function with local vars and instructions
@@ -47,6 +48,7 @@ namespace CompiPascal.Interpreter
             this.instructions = instructions;
             this.line = line;
             this.column = column;
+            this.results = new LinkedList<string>();
         }
 
         //Function with parameters and instructions
@@ -59,6 +61,7 @@ namespace CompiPascal.Interpreter
             this.instructions = instructions;
             this.line = line;
             this.column = column;
+            this.results = new LinkedList<string>();
         }
 
         //Function with only instructions
@@ -71,6 +74,7 @@ namespace CompiPascal.Interpreter
             this.instructions = instructions;
             this.line = line;
             this.column = column;
+            this.results = new LinkedList<string>();
         }
 
         public FunctionTypes GetFunctionType() 

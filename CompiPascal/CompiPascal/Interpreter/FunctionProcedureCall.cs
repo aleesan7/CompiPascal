@@ -14,12 +14,14 @@ namespace CompiPascal.Interpreter
         {
             this.id = id;
             this.parameters = new LinkedList<Expression>();
+            this.results = new LinkedList<string>();
         }
 
         public FunctionProcedureCall(string id, LinkedList<Expression> parameters) 
         {
             this.id = id;
             this.parameters = parameters;
+            this.results = new LinkedList<string>();
         }
 
         public override object execute(Environment env)
@@ -178,6 +180,15 @@ namespace CompiPascal.Interpreter
                     foreach (Instruction instruction in proc.instructions)
                     {
                         instruction.execute(funcOrProcEnv);
+
+                        if (instruction.results.Count > 0)
+                        {
+                            foreach (string result in instruction.results)
+                            {
+                                this.results.AddLast(result);
+                            }
+                            instruction.results.Clear();
+                        }
                     }
                 }
             }

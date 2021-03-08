@@ -11,7 +11,7 @@ namespace CompiPascal.Interpreter
 
         public Graphts() 
         {
-        
+            this.results = new LinkedList<string>();
         }
 
         public override object execute(Environment env)
@@ -19,8 +19,8 @@ namespace CompiPascal.Interpreter
             Environment actual = env;
             
 
-            while (actual != null)
-            {
+            //while (actual != null)
+            //{
                 this.content += "<html>\n <body> <h2>Compi Pascal Symbols Table</h2> <table style=\"width:100%\" border=\"1\"> <tr><th>Name</th><th>Object Type</th><th>Type</th><th>Environment</th><th>Line</th><th>Column</th></tr> \n";
 
                 Dictionary<string, Symbol> variables = actual.GetVariables();
@@ -83,10 +83,10 @@ namespace CompiPascal.Interpreter
 
                 this.content += "</table> </body> </html>";
 
-                actual = actual.GetParent();
-            }
+                //actual = actual.GetParent();
+            //}
 
-            using (StreamWriter outputFile = new StreamWriter("SymbolsTable.html"))
+            using (StreamWriter outputFile = new StreamWriter("SymbolsTable" + "_" + actual.GetEnvName() + "_" + DateTime.Now.ToString("yyyyMMddHHmmssfff") + ".html"))
             {
                 outputFile.WriteLine(this.content);
             }

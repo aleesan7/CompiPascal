@@ -25,16 +25,35 @@ namespace CompiPascal.Interpreter
         {
             Symbol left = this.left.evaluate(env);
             Symbol right = this.right.evaluate(env);
-            Symbol result;
+            Symbol result = null;
             Types resultantType = Utils.TypesTable.getType(left.type, right.type);
+
+            if(resultantType == Types.ERROR)
+                throw new CompiPascal.Utils.PascalError(this.line, this.column, "The given operation it´s not permited ( " + left.ToString() + " " + this.type + " " + right.ToString() + " )", "Semantic");
 
             if (resultantType != Types.INTEGER && (type != "+" && type != "-" && type != "*" && type != "/" && type != "%"))
                 throw new Exception();
 
+            if (resultantType == Types.STRING && !type.Equals("+")) 
+            {
+                throw new CompiPascal.Utils.PascalError(this.line, this.column, "The given operation it´s not permited ( " + left.ToString() + " " + this.type + " " + right.ToString() + " )" , "Semantic");
+            }
+
             switch (type)
             {
                 case "+":
-                    result = new Symbol(double.Parse(left.ToString()) + double.Parse(right.ToString()), left.type, null, this.line, this.column);
+                    if(resultantType == Types.INTEGER || resultantType == Types.REAL) 
+                    {
+                        result = new Symbol(double.Parse(left.ToString()) + double.Parse(right.ToString()), new Type(resultantType,null), null, this.line, this.column);
+                    }
+                    else 
+                    {
+                        if(resultantType == Types.STRING) 
+                        {
+                            result = new Symbol(left.ToString() + right.ToString(), new Type(resultantType, null), null, this.line, this.column);
+                        }
+                    }
+                    
                     return result;
                 case "-":
                     result = new Symbol(double.Parse(left.ToString()) - double.Parse(right.ToString()), left.type, null, this.line, this.column);

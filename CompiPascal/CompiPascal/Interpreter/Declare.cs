@@ -20,6 +20,7 @@ namespace CompiPascal.Interpreter
             this.value = value;
             this.line = line;
             this.column = column;
+            this.results = new LinkedList<string>();
         }
 
         public string GetId() 
