@@ -27,13 +27,15 @@ namespace CompiPascal.Interpreter
 
         public override object execute(Environment env)
         {
+            this.assignment.execute(env);
+
             Symbol cond = this.condition.evaluate(env);
             object val = null;
             //TODO verificar errores
             if (cond.type.type != Types.BOOLEAN)
                 throw new PascalError(this.line, this.column, "The condition for the if isn´t boolean", "Semantic");
 
-            this.assignment.execute(env);
+            
 
             for (int i = int.Parse(this.assignment.GetValue(env)); bool.Parse(cond.value.ToString()); i++) 
             {

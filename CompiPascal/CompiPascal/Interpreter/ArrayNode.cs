@@ -18,7 +18,7 @@ namespace CompiPascal.Interpreter
             this.value = null;
         }
 
-        public void initializeNode(int dimentionsAmount, int actualDimention, LinkedList<int> dimentionsSizes)
+        public void initializeNode(int dimentionsAmount, int actualDimention, LinkedList<int> dimentionsSizes, Types type)
         {
             if (actualDimention > dimentionsAmount)
             {
@@ -27,8 +27,25 @@ namespace CompiPascal.Interpreter
             for (int i = 0; i < dimentionsSizes.ElementAt(actualDimention - 1); i++)
             {
                 ArrayNode arr = new ArrayNode();
+
+                switch (type) 
+                {
+                    case Types.INTEGER:
+                        arr.value = 0;
+                        break;
+                    case Types.STRING:
+                        arr.value = "";
+                        break;
+                    case Types.REAL:
+                        arr.value = 0.0;
+                        break;
+                    case Types.BOOLEAN:
+                        arr.value = false;
+                        break;
+                }
+
                 nextCells.AddLast(arr);
-                arr.initializeNode(dimentionsAmount, actualDimention + 1, dimentionsSizes);
+                arr.initializeNode(dimentionsAmount, actualDimention + 1, dimentionsSizes, type);
             }
         }
 

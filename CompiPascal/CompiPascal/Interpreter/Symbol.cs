@@ -28,7 +28,7 @@ namespace CompiPascal.Interpreter
         {
             this.id = id;
             ArrayNode node = new ArrayNode();
-            node.initializeNode(dimentions.Count, 1, dimentions);
+            node.initializeNode(dimentions.Count, 1, dimentions, type.type);
             this.value = node;
             this.type = type;
             this.line = line;
