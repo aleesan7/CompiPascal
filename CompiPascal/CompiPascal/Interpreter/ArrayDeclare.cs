@@ -55,43 +55,4 @@ namespace CompiPascal.Interpreter
         }
     }
 
-    //private string id;
-    //public Symbol[] values;
-    //public int min;
-    //public int max;
-
-    //public ArrayDeclare(int min, int max) 
-    //{
-    //    int size = 0;
-
-    //    if (min < 0) 
-    //    {
-    //        size = max + (min * -1);
-    //    }
-    //    else 
-    //    {
-    //        size = max;
-    //    }
-
-    //    this.values = new Symbol[max];
-    //}
-
-    //public ArrayDeclare(string id, Symbol[] values, int min, int max)
-    //{
-    //    this.id = id;
-    //    this.values = values;
-    //    this.min = min;
-    //    this.max = max;
-    //}
-
-    //public Symbol GetAttribute(int index) 
-    //{
-    //    return this.values[index];
-    //}
-
-    //public void SetAttribute(int index, Symbol value) 
-    //{
-    //    this.values[index] = value;
-    //}
-
 }

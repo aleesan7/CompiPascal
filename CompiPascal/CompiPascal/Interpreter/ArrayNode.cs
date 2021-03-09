@@ -7,30 +7,17 @@ namespace CompiPascal.Interpreter
 {
     class ArrayNode
     {
-        /**
-     * Lista de celdas vecinas en el arreglo.
-     */
+       
         private LinkedList<ArrayNode> nextCells;
-        /**
-         * Valor que alberga esta celda del arreglo.
-         */
+
         private object value;
-        /**
-         * Constructor para crear una celda de arreglo vacía
-         */
+   
         public ArrayNode()
         {
             this.nextCells = new LinkedList<ArrayNode>();
             this.value = null;
         }
-        /**
-         * Método que inicializa todas las celdas de un arreglo, esta inicialización
-         * se propaga a lo largo de todas las celdas del arreglo según lo que se le 
-         * indica en sus parámetros.
-         * @param dimentionsAmount Cantidad de dimensiones del arreglo
-         * @param actualDimention Dimensión que se está analizando en la propagación actual
-         * @param dimentionsSizes Lista que contienen los tamaños de todas las dimensiones del arreglo
-         */
+
         public void initializeNode(int dimentionsAmount, int actualDimention, LinkedList<int> dimentionsSizes)
         {
             if (actualDimention > dimentionsAmount)
@@ -44,14 +31,7 @@ namespace CompiPascal.Interpreter
                 arr.initializeNode(dimentionsAmount, actualDimention + 1, dimentionsSizes);
             }
         }
-        /**
-         * Método que configura cierto value en una celda específica del arreglo
-         * @param indexesAmount Cantidad de indexes que se reciben para el acceso al arreglo
-         * @param actualIndex Indice que se está analizando en la propagación actual
-         * @param indexes Lista de los indexes con los que se accederá al arreglo para asignar el value
-         * @param val Valor que se le quiere asignar a cierta celda del arreglo
-         * @param id Identificador del arreglo
-         */
+
         public void SetValue(int indexesAmount, int actualIndex, LinkedList<int> indexes, Object val, String id)
         {
             int valIndiceActual = indexes.ElementAt(actualIndex - 1);
@@ -74,15 +54,7 @@ namespace CompiPascal.Interpreter
                 //        + "los límites del arreglo.");
             }
         }
-        /**
-         * Método que recoge cierto value en una celda específica del arreglo y 
-         * devuelve nulo cuando no lo encuentra
-         * @param indexesAmount Cantidad de indexes que se reciben para el acceso al arreglo
-         * @param actualIndex Indice que se está analizando en la propagación actual
-         * @param indexes Lista de los indexes con los que se accederá al arreglo para asignar el value
-         * @param id Identificador del arreglo
-         * @return El value almacenado por la celda específica o null en caso no lo encuentre
-         */
+
         public object GetValue(int indexesAmount, int actualIndex, LinkedList<int> indexes, String id)
         {
             int valIndiceActual = indexes.ElementAt(actualIndex - 1);
