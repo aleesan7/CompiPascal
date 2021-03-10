@@ -474,6 +474,10 @@ namespace CompiPascal.Analysers
                     return new LogicOperation(expression(actual.ChildNodes[0]), expression(actual.ChildNodes[2]), "<", actual.ChildNodes[0].Span.Location.Line, actual.ChildNodes[0].Span.Location.Column);
                 case "<=":
                     return new LogicOperation(expression(actual.ChildNodes[0]), expression(actual.ChildNodes[2]), "<=", actual.ChildNodes[0].Span.Location.Line, actual.ChildNodes[0].Span.Location.Column);
+                case "AND":
+                    return new LogicOperation(expression(actual.ChildNodes[0]), expression(actual.ChildNodes[2]), "&&", actual.ChildNodes[0].Span.Location.Line, actual.ChildNodes[0].Span.Location.Column);
+                case "OR":
+                    return new LogicOperation(expression(actual.ChildNodes[0]), expression(actual.ChildNodes[2]), "||", actual.ChildNodes[0].Span.Location.Line, actual.ChildNodes[0].Span.Location.Column);
                 default:
                     return null;
 

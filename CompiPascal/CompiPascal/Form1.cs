@@ -43,5 +43,30 @@ namespace CompiPascal
                 }
             }
         }
+
+        private void button1_Click(object sender, EventArgs e)
+        {
+            string inputString = txtInputEditor.Text.ToString();
+
+            TranslatorSyntax syntax = new TranslatorSyntax();
+            syntax.Analyze(inputString);
+
+            //if (syntax.resultsList.Count > 0)
+            //{
+            //    foreach (string result in syntax.resultsList)
+            //    {
+            //        txtOutputEditor.Text += result.ToString();
+            //        txtOutputEditor.Text += Environment.NewLine;
+            //    }
+            //}
+            //if (syntax.errorsList.Count > 0)
+            //{
+            //    foreach (CompiPascal.Utils.PascalError error in syntax.errorsList)
+            //    {
+            //        txtOutputEditor.Text += error.GetMesage();
+            //        txtOutputEditor.Text += Environment.NewLine;
+            //    }
+            //}
+        }
     }
 }

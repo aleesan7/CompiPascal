@@ -173,12 +173,14 @@ namespace CompiPascal.Analysers
                                    | MakePlusRule(proc_or_func_declaration, function_declaration)
                                    | Empty;
 
-            procedure_declaration.Rule = PROCEDURE + identifier + LEFTPAREN + parametros + RIGHTPAREN + SEMICOLON + variable_definition_part + BEGIN + instrucciones + END + SEMICOLON
-                                | PROCEDURE + identifier + LEFTPAREN + RIGHTPAREN + SEMICOLON + variable_definition_part + BEGIN + instrucciones + END + SEMICOLON;
+            procedure_declaration.Rule = PROCEDURE + identifier + LEFTPAREN + parametros + RIGHTPAREN + SEMICOLON + variable_definition_part + procedure_declaration + BEGIN + instrucciones + END + SEMICOLON
+                                | PROCEDURE + identifier + LEFTPAREN + RIGHTPAREN + SEMICOLON + variable_definition_part + procedure_declaration + BEGIN + instrucciones + END + SEMICOLON
+                                | Empty;
             procedure_declaration.ErrorRule = SyntaxError + SEMICOLON;
 
-            function_declaration.Rule = FUNCTION + identifier + LEFTPAREN + parametros + RIGHTPAREN + COLON + tipo_funcion + SEMICOLON + variable_definition_part + BEGIN + instrucciones + END + SEMICOLON //{:RESULT = new Function(a, b, c, d);:}
-                          | FUNCTION + identifier + LEFTPAREN + RIGHTPAREN + COLON + tipo_funcion + SEMICOLON + variable_definition_part + BEGIN + instrucciones + END + SEMICOLON; //{:RESULT = new Function(a, b, c);:}
+            function_declaration.Rule = FUNCTION + identifier + LEFTPAREN + parametros + RIGHTPAREN + COLON + tipo_funcion + SEMICOLON + variable_definition_part + function_declaration + BEGIN + instrucciones + END + SEMICOLON //{:RESULT = new Function(a, b, c, d);:}
+                          | FUNCTION + identifier + LEFTPAREN + RIGHTPAREN + COLON + tipo_funcion + SEMICOLON + variable_definition_part + function_declaration + BEGIN + instrucciones + END + SEMICOLON //{:RESULT = new Function(a, b, c);:}
+                          | Empty;
             function_declaration.ErrorRule = SyntaxError + SEMICOLON;
 
             parametros.Rule = MakePlusRule(parametros, parametro)
@@ -242,8 +244,8 @@ namespace CompiPascal.Analysers
                      //| RFOR LEFTPAREN identifier:a EQUAL expresion: b SEMICOLON expresion: c SEMICOLON identifier: d EQUAL expresion: e RIGHTPAREN LLAVIZQ instrucciones:f LLAVDER{:RESULT = new For(new Asignacion(a, b), c, new Asignacion(d, e), f);:}
                      | functionOrProcedureCall               //{:RESULT = new LlamadaFuncion(a, new LinkedList<>());:}
                                                              //| RETURN + SEMICOLON             {:RESULT = new Return();:}
-                     | function_declaration
-                     | procedure_declaration
+                     //| function_declaration
+                     //| procedure_declaration
                      | EXIT + LEFTPAREN + expresion + RIGHTPAREN + SEMICOLON //{:RESULT = new Return(a);:}
                      | BREAK + SEMICOLON //{:RESULT = new Break();:}
                      | CONTINUE + SEMICOLON;
