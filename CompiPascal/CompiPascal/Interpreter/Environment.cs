@@ -9,7 +9,7 @@ namespace CompiPascal.Interpreter
         Dictionary<string, Symbol> variables;
         Dictionary<string, Function> functions;
         Dictionary<string, Procedure> procedures;
-        Dictionary<string, object> structs;
+        Dictionary<string, Struct> structs;
         Environment parent;
         private string environmentName;
 
@@ -170,6 +170,18 @@ namespace CompiPascal.Interpreter
             else
             {
                 throw new Exception("The function " + id + " already exists in the current environment.");
+            }
+        }
+
+        public void AddStruct(string id, Struct str)
+        {
+            if (!this.structs.ContainsKey(id)) 
+            {
+                this.structs.Add(id, str);
+            }
+            else 
+            {
+                throw new CompiPascal.Utils.PascalError(str.line, str.column, "The struct " + id + " already exists in the current environment.", "Semantic");
             }
         }
 

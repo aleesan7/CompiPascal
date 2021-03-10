@@ -11,7 +11,8 @@ namespace CompiPascal.Interpreter
         STRING = 2,
         BOOLEAN = 3,
         IDENTIFIER = 4,
-        ERROR = 5
+        ERROR = 5,
+        TYPE = 6
     }
     class Type
     {
