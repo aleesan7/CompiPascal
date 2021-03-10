@@ -64,9 +64,11 @@ namespace CompiPascal.Interpreter
                     {
                         result = new Symbol((bool)left.value && (bool)right.value, type, null, this.line, this.column);
                     }
-                    else
+                    return result;
+                case "||":
+                    if (resultantType == Types.BOOLEAN)
                     {
-                        result = new Symbol(double.Parse(left.ToString()) == double.Parse(right.ToString()), type, null, this.line, this.column);
+                        result = new Symbol((bool)left.value || (bool)right.value, type, null, this.line, this.column);
                     }
                     return result;
             }
