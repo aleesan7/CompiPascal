@@ -74,5 +74,32 @@ namespace CompiPascal.Interpreter
             }
             return null;
         }
+
+        public override string evaluateTranslate(Environment env)
+        {
+            string left = this.left.evaluateTranslate(env);
+            string right = this.right.evaluateTranslate(env);
+
+            switch (tipoOperacion)
+            {
+                case "=":
+                    return left + " = " + right;
+                case "<>":
+                    return left + " <> " + right;
+                case ">":
+                    return left + " > " + right;
+                case "<":
+                    return left + " < " + right;
+                case ">=":
+                    return left + " >= " + right;
+                case "<=":
+                    return left + " <= " + right;
+                case "&&":
+                    return left + " && " + right;
+                case "||":
+                    return left + " || " + right;
+            }
+            return null;
+        }
     }
 }

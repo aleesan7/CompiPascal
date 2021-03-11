@@ -92,5 +92,10 @@ namespace CompiPascal.Interpreter
             env.AddFunction(this.id, this);
             return null;
         }
+
+        public override string executeTranslate(Environment env)
+        {
+            throw new NotImplementedException();
+        }
     }
 }

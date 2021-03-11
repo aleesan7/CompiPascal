@@ -145,6 +145,11 @@ namespace CompiPascal.Interpreter
             return null;
         }
 
+        public override string executeTranslate(Environment env)
+        {
+            throw new NotImplementedException();
+        }
+
         //public override object execute(Environment env)
         //{
         //    bool isFunction = false;

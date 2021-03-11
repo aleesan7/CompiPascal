@@ -93,5 +93,10 @@ namespace CompiPascal.Interpreter
 
             return null;
         }
+
+        public override string executeTranslate(Environment env)
+        {
+            return "graficar_ts();";
+        }
     }
 }

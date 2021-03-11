@@ -8,5 +8,7 @@ namespace CompiPascal.Interpreter
     {
         public LinkedList<string> results;
         public abstract object execute(Environment env);
+
+        public abstract string executeTranslate(Environment env);
     }
 }

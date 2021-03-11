@@ -7,5 +7,7 @@ namespace CompiPascal.Interpreter
     abstract class Expression
     {
         public abstract Symbol evaluate(Environment env);
+
+        public abstract string evaluateTranslate(Environment env);
     }
 }

@@ -13,8 +13,9 @@ namespace CompiPascal.Analysers
     class Syntax
     {
         public List<string> resultsList = new List<string>();
+        public List<string> translateResultsList = new List<string>();
         public List<CompiPascal.Utils.PascalError> errorsList = new List<CompiPascal.Utils.PascalError>();
-        public static string strResult = "";
+        public string strResult = "";
 
         public void Analyze(string input)
         {
@@ -43,14 +44,6 @@ namespace CompiPascal.Analysers
                 LinkedList<Instruction> instructionsList = instructions(root.ChildNodes[2].ChildNodes[4]);
                 execute(variableDeclaration, functionAndProcedureDeclaration, instructionsList);
 
-                //LinkedList<Instruccion> AST = instrucciones(raiz.ChildNodes.ElementAt(0));
-
-                //TablaDeSimbolos global = new TablaDeSimbolos();
-
-                //foreach (Instruccion ins in AST)
-                //{
-                //    ins.ejecutar(global);
-                //}
 
             }
             else
@@ -59,6 +52,43 @@ namespace CompiPascal.Analysers
             }
 
         }
+
+        public void AnalyzeTranslator(string input)
+        {
+
+            InterpreterGrammar grammar = new InterpreterGrammar();
+            LanguageData language = new LanguageData(grammar);
+
+            foreach (var item in language.Errors)
+            {
+                Console.WriteLine(item);
+            }
+
+            Parser parser = new Parser(language);
+            ParseTree tree = parser.Parse(input);
+
+            ParseTreeNode root = tree.Root;
+
+            Errors errors = new Errors(tree, root);
+
+            if (!errors.HasErrors())
+            {
+                generateGraph(root);
+
+                LinkedList<Instruction> variableDeclaration = instructions(root.ChildNodes[2].ChildNodes[1]);
+                LinkedList<Instruction> functionAndProcedureDeclaration = instructions(root.ChildNodes[2].ChildNodes[2].ChildNodes[0].ChildNodes[0]);
+                LinkedList<Instruction> instructionsList = instructions(root.ChildNodes[2].ChildNodes[4]);
+                executeTranslator(variableDeclaration, functionAndProcedureDeclaration, instructionsList);
+
+
+            }
+            else
+            {
+                //We print the errors in the output 
+            }
+
+        }
+
 
         public void execute(LinkedList<Instruction> variables, LinkedList<Instruction> functionsAndProcedures, LinkedList<Instruction> instructions)
         {
@@ -93,6 +123,45 @@ namespace CompiPascal.Analysers
                     errorsList.Add(ex);
                 }
             }
+        }
+
+        public void executeTranslator(LinkedList<Instruction> variables, LinkedList<Instruction> functionsAndProcedures, LinkedList<Instruction> instructions)
+        {
+            Interpreter.Environment global = new Interpreter.Environment(null);
+            string execution = string.Empty;
+            global.SetEnvName("global");
+
+            foreach (var variable in variables)
+            {
+                execution += variable.executeTranslate(global);
+            }
+
+            execution += System.Environment.NewLine;
+
+            //foreach (var funcOrProc in functionsAndProcedures)
+            //{
+            //    object exec = funcOrProc.execute(global);
+            //}
+
+            this.translateResultsList.Add("begin");
+            execution += "begin" + System.Environment.NewLine;
+
+            foreach (var instruction in instructions)
+            {
+                try
+                {
+                    execution = execution  + instruction.executeTranslate(global);
+                }
+                catch (CompiPascal.Utils.PascalError ex)
+                {
+                    errorsList.Add(ex);
+                }
+            }
+
+            this.translateResultsList.Add("end.");
+            execution += "end." + System.Environment.NewLine;
+
+            this.strResult = execution;
         }
 
         public LinkedList<Instruction> instructions(ParseTreeNode actual)
@@ -151,7 +220,7 @@ namespace CompiPascal.Analysers
 
         public Instruction caseElement(ParseTreeNode actual) 
         {
-            return new Case_element(expression(actual.ChildNodes[0]), instruction(actual.ChildNodes[2]), actual.ChildNodes[0].Span.Location.Line, actual.ChildNodes[0].Span.Location.Column);
+            return new Case_element(expression(actual.ChildNodes[0]), instruction(actual.ChildNodes[2]), expression(actual.ChildNodes[0]), actual.ChildNodes[0].Span.Location.Line, actual.ChildNodes[0].Span.Location.Column);
         }
 
         public Interpreter.Range range (ParseTreeNode actual) 

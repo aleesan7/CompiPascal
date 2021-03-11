@@ -75,6 +75,11 @@ namespace CompiPascal.Interpreter
             return newEnv.ObtainVariable(this.id);
         }
 
+        public override string evaluateTranslate(Environment env)
+        {
+            throw new NotImplementedException();
+        }
+
         //public override Symbol evaluate(Environment env)
         //{
         //    bool isFunction = false;

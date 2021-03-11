@@ -30,5 +30,23 @@ namespace CompiPascal.Interpreter
             }
             return env.GetArrayValue(this.id, indexesValues);
         }
+
+        public override string evaluateTranslate(Environment env)
+        {
+            string arrayAccessContent = string.Empty;
+
+            string indexesContent = string.Empty;
+
+            foreach (Expression expr in this.indexes)
+            {
+                indexesContent += expr.evaluateTranslate(env) + ",";
+            }
+
+            indexesContent = indexesContent.Substring(0, indexesContent.Length - 1);
+
+            arrayAccessContent += this.id + "[" + indexesContent + "]";
+
+            return arrayAccessContent;
+        }
     }
 }

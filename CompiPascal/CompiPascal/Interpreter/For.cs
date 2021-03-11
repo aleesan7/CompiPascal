@@ -92,5 +92,29 @@ namespace CompiPascal.Interpreter
 
             return null;
         }
+
+        public override string executeTranslate(Environment env)
+        {
+            string resultantFor = string.Empty;
+            string condition = this.condition.evaluateTranslate(env);
+            string[] conditionParts = condition.Split('=');
+            string instructions = string.Empty;
+
+            if (this.instructions.Count > 0)
+            {
+                foreach (Instruction instruction in this.instructions)
+                {
+                    instructions = instructions + instruction.executeTranslate(env) + System.Environment.NewLine;
+                }
+
+            }
+
+            resultantFor += "\t" + "for " + this.assignment.GetId() + " := " + this.assignment.GetValue().evaluateTranslate(env) + " to " + conditionParts[1] + " do" + System.Environment.NewLine;
+            resultantFor += "\t" + "begin" + System.Environment.NewLine;
+            resultantFor += "\t" + instructions;
+            resultantFor += "\t" + "end;" + System.Environment.NewLine;
+
+            return resultantFor;
+        }
     }
 }

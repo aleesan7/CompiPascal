@@ -28,5 +28,22 @@ namespace CompiPascal.Interpreter
             System.Diagnostics.Debug.Write(finalResult);
             return null;
         }
+
+        public override string executeTranslate(Environment env)
+        {
+            string finalResult = "writeln(";
+            foreach (Expression expression in this.content)
+            {
+                finalResult = finalResult + expression.evaluateTranslate(env) + ",";
+            }
+
+            finalResult = finalResult.Substring(0, finalResult.Length - 1);
+
+            finalResult = finalResult + ");" + System.Environment.NewLine;
+
+            System.Diagnostics.Debug.Write(finalResult);
+
+            return finalResult;
+        }
     }
 }

@@ -9,13 +9,15 @@ namespace CompiPascal.Interpreter
     {
         private Expression condition;
         private Instruction instruction;
+        private Expression elementValue;
         public int line;
         public int column;
 
-        public Case_element(Expression condition, Instruction instruction, int line, int column)
+        public Case_element(Expression condition, Instruction instruction, Expression elementValue, int line, int column)
         {
             this.condition = condition;
             this.instruction = instruction;
+            this.elementValue = elementValue;
             this.line = line;
             this.column = column;
             this.results = new LinkedList<string>();
@@ -75,6 +77,20 @@ namespace CompiPascal.Interpreter
                 throw new Exception(ex.Message);
             }
             return null;
+        }
+
+        public override string executeTranslate(Environment env)
+        {
+            string caseElement = string.Empty;
+            try
+            {
+                caseElement += this.elementValue.evaluateTranslate(env) + " : " + this.instruction.executeTranslate(env);
+            }
+            catch (Exception ex)
+            {
+                throw new Exception(ex.Message);
+            }
+            return caseElement;
         }
     }
 }

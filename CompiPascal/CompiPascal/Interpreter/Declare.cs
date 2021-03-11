@@ -36,5 +36,24 @@ namespace CompiPascal.Interpreter
             env.declareVariable(this.id, variable);
             return null;
         }
+
+        public override string executeTranslate(Environment env)
+        {
+            Symbol variable = this.value.evaluate(env);
+            string result = string.Empty;
+
+            if (variable.type.type == Types.STRING && variable.value.ToString().Equals("")) 
+            {
+                result = "var " + this.id + " : " + variable.type.type.ToString().ToLower() + " = " + "''" + ";";
+            }
+            else 
+            {
+                result = "var " + this.id + " : " + variable.type.type.ToString().ToLower() + " = " + this.value.evaluateTranslate(env) + ";";
+            }
+
+            result += System.Environment.NewLine;
+            
+            return result;
+        }
     }
 }

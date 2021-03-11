@@ -18,5 +18,10 @@ namespace CompiPascal.Interpreter
         {
             return this.type;
         }
+
+        public override string executeTranslate(Environment env)
+        {
+            return "continue;";
+        }
     }
 }

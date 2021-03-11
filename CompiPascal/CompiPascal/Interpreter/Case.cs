@@ -29,10 +29,40 @@ namespace CompiPascal.Interpreter
                     tempCaseElement.SetCondition(newExpr);
 
                     tempCaseElement.execute(env);
+
+                    if (tempCaseElement.results.Count > 0)
+                    {
+                        foreach (string result in tempCaseElement.results)
+                        {
+                            this.results.AddLast(result);
+                        }
+                        tempCaseElement.results.Clear();
+                    }
                 }
             }
 
             return null;
+        }
+
+        public override string executeTranslate(Environment env)
+        {
+            string caseContent = string.Empty;
+            string caseElements = string.Empty;
+
+            if (this.caseElements.Count > 0)
+            {
+                foreach (Case_element case_element in this.caseElements)
+                {
+                    caseElements += case_element.executeTranslate(env) + System.Environment.NewLine;
+                }
+
+            }
+
+            caseContent += "case " + this.expr.evaluateTranslate(env) + " of" + System.Environment.NewLine;
+            caseContent += "\t" + caseElements;
+            caseContent += "end;" + System.Environment.NewLine;
+
+            return caseContent;
         }
     }
 }

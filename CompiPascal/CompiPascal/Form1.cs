@@ -48,17 +48,23 @@ namespace CompiPascal
         {
             string inputString = txtInputEditor.Text.ToString();
 
-            TranslatorSyntax syntax = new TranslatorSyntax();
-            syntax.Analyze(inputString);
+            Syntax syntax = new Syntax();
+            syntax.AnalyzeTranslator(inputString);
 
-            //if (syntax.resultsList.Count > 0)
+            //if (syntax.translateResultsList.Count > 0)
             //{
-            //    foreach (string result in syntax.resultsList)
+            //    foreach (string result in syntax.translateResultsList)
             //    {
             //        txtOutputEditor.Text += result.ToString();
             //        txtOutputEditor.Text += Environment.NewLine;
             //    }
             //}
+            if (!syntax.strResult.Equals("")) 
+            {
+                txtOutputEditor.Text += syntax.strResult;
+                txtOutputEditor.Text += Environment.NewLine;
+            }
+
             //if (syntax.errorsList.Count > 0)
             //{
             //    foreach (CompiPascal.Utils.PascalError error in syntax.errorsList)

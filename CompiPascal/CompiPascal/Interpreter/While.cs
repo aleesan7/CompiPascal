@@ -83,5 +83,27 @@ namespace CompiPascal.Interpreter
             return null;
         }
 
+        public override string executeTranslate(Environment env)
+        {
+            string resultantWhile = string.Empty;
+            string condition = this.condition.evaluateTranslate(env);
+            string instructions = string.Empty;
+
+            if (this.instructions.Count > 0)
+            {
+                foreach (Instruction instruction in this.instructions)
+                {
+                    instructions = instructions + instruction.executeTranslate(env) + System.Environment.NewLine;
+                }
+
+            }
+
+            resultantWhile += "\t" + "while ( " + condition + " ) do" + System.Environment.NewLine;
+            resultantWhile += "\t" + "begin" + System.Environment.NewLine;
+            resultantWhile += "\t" + instructions;
+            resultantWhile += "\t" + "end;" + System.Environment.NewLine;
+
+            return resultantWhile;
+        }
     }
 }

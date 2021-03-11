@@ -46,5 +46,13 @@ namespace CompiPascal.Interpreter
             }
             return null;
         }
+
+        public override string executeTranslate(Environment env)
+        {
+            Symbol tempVar = env.ObtainVariable(this.id);
+            string value = this.value.evaluateTranslate(env);
+
+            return this.id + " := " + value + ";" + System.Environment.NewLine;
+        }
     }
 }

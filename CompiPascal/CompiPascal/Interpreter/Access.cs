@@ -35,5 +35,10 @@ namespace CompiPascal.Interpreter
                 return variable;
             }
         }
+
+        public override string evaluateTranslate(Environment env)
+        {
+            throw new NotImplementedException();
+        }
     }
 }

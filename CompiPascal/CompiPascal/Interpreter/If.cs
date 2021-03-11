@@ -106,5 +106,53 @@ namespace CompiPascal.Interpreter
             }
             return null;
         }
+
+        public override string executeTranslate(Environment env)
+        {
+            string resultantIf = string.Empty;
+            string condition = this.value.evaluateTranslate(env);
+            string instructions = string.Empty;
+            string instructionsElse = string.Empty;
+            try
+            {
+                if (this.Instructions.Count > 0) 
+                {
+                    foreach(Instruction instruction in this.Instructions) 
+                    {
+                        instructions = instructions + instruction.executeTranslate(env) + System.Environment.NewLine;
+                    }
+                   
+                }
+
+                if (this._else.Count > 0)
+                {
+                    foreach (Instruction instructionelse in this._else)
+                    {
+                        instructionsElse = instructionsElse + instructionelse.executeTranslate(env) + System.Environment.NewLine;
+                    }
+
+                }
+
+                resultantIf = "\t" + "if " + condition + " Then" + System.Environment.NewLine;
+                resultantIf += "\t" + "begin" + System.Environment.NewLine;
+                resultantIf += "\t" + instructions;
+                resultantIf += "\t" + "end" + System.Environment.NewLine;
+
+                if (!instructionsElse.Equals("")) 
+                {
+                    resultantIf += "\t" + "else" + System.Environment.NewLine;
+                    resultantIf += "\t" + "begin" + System.Environment.NewLine;
+                    resultantIf += "\t" + instructionsElse;
+                    resultantIf += "\t" + "end" + System.Environment.NewLine;
+                }
+
+
+            }
+            catch (Exception ex)
+            {
+                throw new Exception(ex.Message);
+            }
+            return resultantIf;
+        }
     }
 }

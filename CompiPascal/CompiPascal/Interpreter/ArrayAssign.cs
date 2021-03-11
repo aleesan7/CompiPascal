@@ -35,6 +35,22 @@ namespace CompiPascal.Interpreter
             env.AssignArrayValue(this.id, this.value.evaluate(env), indexesValues);
             return null;
         }
-        
+
+        public override string executeTranslate(Environment env)
+        {
+            string arrayAssignContent = string.Empty;
+            string indexesContent = string.Empty;
+
+            foreach(Expression expr in this.indexes) 
+            {
+                indexesContent += expr.evaluateTranslate(env) + ",";
+            }
+
+            indexesContent = indexesContent.Substring(0, indexesContent.Length - 1);
+
+            arrayAssignContent += this.id + "[" + indexesContent + "]" + " := " + this.value.evaluateTranslate(env) + ";" + System.Environment.NewLine;
+
+            return arrayAssignContent;
+        }
     }
 }

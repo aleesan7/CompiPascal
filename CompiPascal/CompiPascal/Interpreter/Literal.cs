@@ -43,5 +43,16 @@ namespace CompiPascal.Interpreter
                     return null;
             }
         }
+
+        public override string evaluateTranslate(Environment env)
+        {
+            switch (this.type)
+            {
+                case Types.IDENTIFIER:
+                    return this.id.ToString();
+                default:
+                    return this.value.ToString();
+            }
+        }
     }
 }

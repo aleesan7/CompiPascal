@@ -53,6 +53,23 @@ namespace CompiPascal.Interpreter
             env.declareVariable(this.id, new Symbol(this.type, this.id, dimentionsSizes, this.line, this.column));
             return null;
         }
+
+        public override string executeTranslate(Environment env)
+        {
+            string ArrayDeclareContent = string.Empty;
+            string dimentions = string.Empty;
+
+            foreach(Range range in this.dimentions) 
+            {
+                dimentions += range.GetInfExpression().evaluateTranslate(env) + ".." + range.GetSupExpression().evaluateTranslate(env) + " , " ;
+            }
+
+            dimentions = dimentions.Substring(0, dimentions.Length - 3);
+
+            ArrayDeclareContent += "var " + this.id + " : " + "array" + "[" + dimentions + "] of " + this.type.type.ToString().ToLower() + ";"; 
+
+            return ArrayDeclareContent;
+        }
     }
 
 }

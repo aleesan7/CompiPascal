@@ -27,5 +27,10 @@ namespace CompiPascal.Interpreter
             env.AddStruct(this.id, this);
             return null;
         }
+
+        public override string executeTranslate(Environment env)
+        {
+            throw new NotImplementedException();
+        }
     }
 }

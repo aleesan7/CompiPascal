@@ -26,5 +26,10 @@ namespace CompiPascal.Interpreter
             env.assignVariableValue(env.GetEnvName(), this.value.evaluate(env));
             return this.value.evaluate(env);
         }
+
+        public override string executeTranslate(Environment env)
+        {
+            return "exit (" + this.value.evaluateTranslate(env) + ")";
+        }
     }
 }

@@ -60,5 +60,10 @@ namespace CompiPascal.Interpreter
             env.AddProcedure(this.id, this);
             return null;
         }
+
+        public override string executeTranslate(Environment env)
+        {
+            throw new NotImplementedException();
+        }
     }
 }
