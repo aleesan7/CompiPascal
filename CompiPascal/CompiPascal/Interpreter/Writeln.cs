@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Text;
 
 namespace CompiPascal.Interpreter
@@ -12,7 +13,6 @@ namespace CompiPascal.Interpreter
         public Writeln(LinkedList<Expression> content)
         {
             this.content = content;
-            this.results = new LinkedList<string>();
         }
 
         public override object execute(Environment env)
@@ -24,9 +24,10 @@ namespace CompiPascal.Interpreter
                 toWrite = expression.evaluate(env);
                 finalResult = finalResult + toWrite.value.ToString();
             }
+            export(finalResult);
 
-            results.AddLast(finalResult);
             System.Diagnostics.Debug.WriteLine(finalResult);
+            Console.WriteLine(finalResult);
             return null;
         }
 
@@ -45,6 +46,28 @@ namespace CompiPascal.Interpreter
             System.Diagnostics.Debug.WriteLine(finalResult);
 
             return  finalResult;
+        }
+
+        public void export(string content)
+        {
+            string path = "results.txt";
+            try
+            {
+
+                if (!File.Exists(path))
+                {
+                    File.WriteAllText(path, content + System.Environment.NewLine);
+                }
+                else
+                {
+                    File.AppendAllText(path, content + System.Environment.NewLine);
+                }
+
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex.ToString());
+            }
         }
     }
 }

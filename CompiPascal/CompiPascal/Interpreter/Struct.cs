@@ -19,7 +19,6 @@ namespace CompiPascal.Interpreter
             this.line = line;
             this.column = column;
             this.members = members;
-            this.results = new LinkedList<string>();
         }
 
         public override object execute(Environment env)

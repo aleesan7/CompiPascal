@@ -14,14 +14,12 @@ namespace CompiPascal.Interpreter
         {
             this.id = id;
             this.parameters = new LinkedList<Expression>();
-            this.results = new LinkedList<string>();
         }
 
         public FunctionProcedureCall(string id, LinkedList<Expression> parameters) 
         {
             this.id = id;
             this.parameters = parameters;
-            this.results = new LinkedList<string>();
         }
 
         public override object execute(Environment env)
@@ -45,7 +43,7 @@ namespace CompiPascal.Interpreter
                 else
                 {
                     //TODO let know that the call doesn´t correspond to neither a function nor a procedure
-                    throw new Exception("The call doesn´t correspond to neither a function nor a procedure.");
+                    throw new CompiPascal.Utils.PascalError(0, 0, "The call " + this.id + "() doesn´t correspond to neither a function nor a procedure.", "Semantic");
                 }
             }
 
@@ -75,15 +73,6 @@ namespace CompiPascal.Interpreter
                     foreach (Instruction instruction in proc.instructions)
                     {
                         instruction.execute(newEnv);
-
-                        if (instruction.results.Count > 0)
-                        {
-                            foreach (string result in instruction.results)
-                            {
-                                this.results.AddLast(result);
-                            }
-                            instruction.results.Clear();
-                        }
                     }
                 }
 
@@ -147,7 +136,56 @@ namespace CompiPascal.Interpreter
 
         public override string executeTranslate(Environment env)
         {
-            throw new NotImplementedException();
+            bool isFunction = false;
+            bool isProcedure = false;
+            string cadena = "";
+
+            if (env.ObtainFunction(this.id) != null)
+            {
+                isFunction = true;
+            }
+            else
+            {
+                if (env.ObtainProcedure(this.id) != null)
+                {
+                    isProcedure = true;
+                }
+                else
+                {
+                    //TODO let know that the call doesn´t correspond to neither a function nor a procedure
+                    throw new CompiPascal.Utils.PascalError(0, 0, "The call " + this.id + "() doesn´t correspond to neither a function nor a procedure.", "Semantic");
+                }
+            }
+
+            if (isProcedure)
+            {
+                Procedure proc = env.ObtainProcedure(this.id);
+                bool entro = false;
+                if (proc != null) 
+                {
+                    cadena = proc.uniqueID + "(";
+                    for (int i = 0; i < this.parameters.Count; i++)
+                    {
+                        Symbol tempSymbol = this.parameters.ElementAt(i).evaluate(env);
+                        env.declareVariable(proc.parameters.ElementAt(i).GetId(), tempSymbol);
+                        cadena += tempSymbol.value.ToString() + ",";
+                        entro = true;
+                    }
+
+                    if (entro) 
+                    {
+                        cadena = cadena.Substring(0, cadena.Length - 1) + ")";
+                    }
+                    else 
+                    {
+                        cadena +=  ")";
+                    }
+                    
+
+                }
+            }
+
+            return cadena;
         }
 
         //public override object execute(Environment env)

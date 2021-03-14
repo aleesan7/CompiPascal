@@ -13,7 +13,6 @@ namespace CompiPascal.Interpreter
         {
             this.id = id;
             this.value = value;
-            this.results = new LinkedList<string>();
         }
 
         public string GetId() 

@@ -22,7 +22,6 @@ namespace CompiPascal.Interpreter
             this.instructions = instructions;
             this.line = line;
             this.column = column;
-            this.results = new LinkedList<string>();
         }
 
         public override object execute(Environment env)
@@ -44,15 +43,6 @@ namespace CompiPascal.Interpreter
                     foreach (var instruction in instructions)
                     {
                         val  = instruction.execute(env);
-
-                        if (instruction.results.Count > 0)
-                        {
-                            foreach (string result in instruction.results)
-                            {
-                                this.results.AddLast(result);
-                            }
-                            instruction.results.Clear();
-                        }
 
                         if (val != null)
                         {

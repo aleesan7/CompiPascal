@@ -13,7 +13,6 @@ namespace CompiPascal.Interpreter
         {
             this.expr = expr;
             this.caseElements = caseElements;
-            this.results = new LinkedList<string>();
         }
 
         public override object execute(Environment env)
@@ -23,20 +22,30 @@ namespace CompiPascal.Interpreter
                 if (caseElement.GetType().Name.ToString().ToLower().Equals("case_element"))
                 {
                     Case_element tempCaseElement = (Case_element)caseElement;
-                    Expression tempExpr = tempCaseElement.GetCondition();
-                    LogicOperation newExpr = new LogicOperation(this.expr, tempExpr, "=", 0, 0);
 
-                    tempCaseElement.SetCondition(newExpr);
-
-                    tempCaseElement.execute(env);
-
-                    if (tempCaseElement.results.Count > 0)
+                    if (!tempCaseElement.elseFlag) 
                     {
-                        foreach (string result in tempCaseElement.results)
+                        Expression tempExpr = tempCaseElement.GetCondition();
+                        LogicOperation newExpr = new LogicOperation(this.expr, tempExpr, "=", 0, 0);
+
+                        tempCaseElement.SetCondition(newExpr);
+                    }
+                    
+                    object val = tempCaseElement.execute(env);
+
+                    if (val != null)
+                    {
+                        //if (val.ToString().ToLower().Equals("break") || val.ToString().ToLower().Equals("break"))
+                        //{
+                        return val;
+                        //}
+                    }
+                    else 
+                    {
+                        if (tempCaseElement.executed) 
                         {
-                            this.results.AddLast(result);
+                            break;
                         }
-                        tempCaseElement.results.Clear();
                     }
                 }
             }

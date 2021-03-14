@@ -22,8 +22,8 @@ namespace CompiPascal.Interpreter
 
                 variable = globalEnv.ObtainVariable(this.id);
 
-                if (variable == null) { 
-                    throw new Exception("The variable '" + id + "' doesn´t exist.");
+                if (variable == null) {
+                    throw new CompiPascal.Utils.PascalError(0, 0, "the variable '" + id + "' doesn´t exists.", "Semantic");
                 }
                 else 
                 {

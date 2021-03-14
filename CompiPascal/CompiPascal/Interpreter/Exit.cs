@@ -13,7 +13,6 @@ namespace CompiPascal.Interpreter
         {
             this.type = type;
             this.value = value;
-            this.results = new LinkedList<string>();
         }
 
         public Expression GetValue()

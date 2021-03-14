@@ -46,6 +46,7 @@ namespace CompiPascal
             this.splitContainer1.Dock = System.Windows.Forms.DockStyle.Fill;
             this.splitContainer1.Location = new System.Drawing.Point(0, 0);
             this.splitContainer1.Name = "splitContainer1";
+            this.splitContainer1.Orientation = System.Windows.Forms.Orientation.Horizontal;
             // 
             // splitContainer1.Panel1
             // 
@@ -57,22 +58,23 @@ namespace CompiPascal
             // splitContainer1.Panel2
             // 
             this.splitContainer1.Panel2.Controls.Add(this.txtOutputEditor);
-            this.splitContainer1.Size = new System.Drawing.Size(1118, 588);
-            this.splitContainer1.SplitterDistance = 650;
+            this.splitContainer1.Size = new System.Drawing.Size(747, 803);
+            this.splitContainer1.SplitterDistance = 425;
             this.splitContainer1.TabIndex = 0;
             // 
             // button3
             // 
-            this.button3.Location = new System.Drawing.Point(308, 547);
+            this.button3.Location = new System.Drawing.Point(436, 376);
             this.button3.Name = "button3";
-            this.button3.Size = new System.Drawing.Size(94, 29);
+            this.button3.Size = new System.Drawing.Size(115, 29);
             this.button3.TabIndex = 3;
-            this.button3.Text = "Reportes";
+            this.button3.Text = "Graficar AST";
             this.button3.UseVisualStyleBackColor = true;
+            this.button3.Click += new System.EventHandler(this.button3_Click);
             // 
             // button2
             // 
-            this.button2.Location = new System.Drawing.Point(169, 547);
+            this.button2.Location = new System.Drawing.Point(311, 376);
             this.button2.Name = "button2";
             this.button2.Size = new System.Drawing.Size(94, 29);
             this.button2.TabIndex = 2;
@@ -82,7 +84,7 @@ namespace CompiPascal
             // 
             // button1
             // 
-            this.button1.Location = new System.Drawing.Point(37, 547);
+            this.button1.Location = new System.Drawing.Point(186, 376);
             this.button1.Name = "button1";
             this.button1.Size = new System.Drawing.Size(94, 29);
             this.button1.TabIndex = 1;
@@ -96,22 +98,25 @@ namespace CompiPascal
             this.txtInputEditor.Multiline = true;
             this.txtInputEditor.Name = "txtInputEditor";
             this.txtInputEditor.ScrollBars = System.Windows.Forms.ScrollBars.Both;
-            this.txtInputEditor.Size = new System.Drawing.Size(624, 525);
+            this.txtInputEditor.Size = new System.Drawing.Size(723, 358);
             this.txtInputEditor.TabIndex = 0;
             // 
             // txtOutputEditor
             // 
-            this.txtOutputEditor.Location = new System.Drawing.Point(15, 12);
+            this.txtOutputEditor.BackColor = System.Drawing.SystemColors.ActiveCaptionText;
+            this.txtOutputEditor.ForeColor = System.Drawing.SystemColors.Window;
+            this.txtOutputEditor.Location = new System.Drawing.Point(12, 12);
             this.txtOutputEditor.Multiline = true;
             this.txtOutputEditor.Name = "txtOutputEditor";
-            this.txtOutputEditor.Size = new System.Drawing.Size(437, 564);
+            this.txtOutputEditor.ScrollBars = System.Windows.Forms.ScrollBars.Both;
+            this.txtOutputEditor.Size = new System.Drawing.Size(723, 322);
             this.txtOutputEditor.TabIndex = 0;
             // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 20F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(1118, 588);
+            this.ClientSize = new System.Drawing.Size(747, 803);
             this.Controls.Add(this.splitContainer1);
             this.Name = "Form1";
             this.Text = "Form1";

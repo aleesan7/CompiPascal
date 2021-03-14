@@ -8,19 +8,21 @@ namespace CompiPascal.Interpreter
     class Case_element : Instruction
     {
         private Expression condition;
-        private Instruction instruction;
+        private LinkedList<Instruction> instructions;
         private Expression elementValue;
+        public bool elseFlag = false;
+        public bool executed = false;
         public int line;
         public int column;
 
-        public Case_element(Expression condition, Instruction instruction, Expression elementValue, int line, int column)
+        public Case_element(Expression condition, LinkedList<Instruction> instructions, Expression elementValue, bool elseFlag, int line, int column)
         {
             this.condition = condition;
-            this.instruction = instruction;
+            this.instructions = instructions;
             this.elementValue = elementValue;
+            this.elseFlag = elseFlag;
             this.line = line;
             this.column = column;
-            this.results = new LinkedList<string>();
         }
 
         public Expression GetCondition() 
@@ -43,26 +45,21 @@ namespace CompiPascal.Interpreter
                 if (value.type.type != Types.BOOLEAN)
                     throw new PascalError(this.line, this.column, "The condition for the if isn´t boolean", "Semantic");
 
-                if (bool.Parse(value.value.ToString()))
+                if (bool.Parse(value.value.ToString()) || this.elseFlag)
                 {
                     try
                     {
-                        object val = this.instruction.execute(env);
-
-                        if (instruction.results.Count > 0)
+                        foreach(Instruction instruction in this.instructions) 
                         {
-                            foreach (string result in instruction.results)
-                            {
-                                this.results.AddLast(result);
-                            }
-                            instruction.results.Clear();
-                        }
+                            object val = instruction.execute(env);
+                            this.executed = true;
 
-                        if (val != null)
-                        {
-                            if (val.ToString().ToLower().Equals("break"))
+                            if (val != null)
                             {
-                                return val;
+                                //if (val.ToString().ToLower().Equals("break") || val.ToString().ToLower().Equals("break"))
+                                //{
+                                    return val;
+                                //}
                             }
                         }
                     }
@@ -82,9 +79,24 @@ namespace CompiPascal.Interpreter
         public override string executeTranslate(Environment env)
         {
             string caseElement = string.Empty;
+            string instructions = string.Empty;
+
             try
             {
-                caseElement += this.elementValue.evaluateTranslate(env) + " : " + this.instruction.executeTranslate(env);
+                foreach(Instruction instruction in this.instructions) 
+                {
+                    instructions += "\t" + instruction.executeTranslate(env);
+                }
+
+                if (!elseFlag) 
+                {
+                    caseElement += "\t" + this.elementValue.evaluateTranslate(env) + " : " + System.Environment.NewLine + "\t begin" + System.Environment.NewLine + instructions + System.Environment.NewLine + "\t end;";
+                }
+                else 
+                {
+                    caseElement += "\t" + " else " + System.Environment.NewLine + "\t begin" + System.Environment.NewLine + instructions + System.Environment.NewLine + "\t end;";
+                }
+                
             }
             catch (Exception ex)
             {

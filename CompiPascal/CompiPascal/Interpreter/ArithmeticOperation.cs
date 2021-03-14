@@ -64,6 +64,9 @@ namespace CompiPascal.Interpreter
                 case "/":
                     result = new Symbol(double.Parse(left.ToString()) / double.Parse(right.ToString()), left.type, null, this.line, this.column);
                     return result;
+                case "div":
+                    result = new Symbol(Convert.ToInt32(double.Parse(left.ToString()) / double.Parse(right.ToString())), new Type(Types.INTEGER, null), null, this.line, this.column);
+                    return result;
                 case "%":
                     result = new Symbol(double.Parse(left.ToString()) % double.Parse(right.ToString()), left.type, null, this.line, this.column);
                     return result;

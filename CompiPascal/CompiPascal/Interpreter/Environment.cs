@@ -10,8 +10,11 @@ namespace CompiPascal.Interpreter
         Dictionary<string, Function> functions;
         Dictionary<string, Procedure> procedures;
         Dictionary<string, Struct> structs;
+        LinkedList<string> codes;
         Environment parent;
         private string environmentName;
+        public string idParent;
+        public string actualFunct;
 
         public Environment(Environment parent)
         {
@@ -19,6 +22,16 @@ namespace CompiPascal.Interpreter
             this.variables = new Dictionary<string, Symbol>();
             this.functions = new Dictionary<string, Function>();
             this.procedures = new Dictionary<string, Procedure>();
+            this.codes = new LinkedList<string>();
+
+            if (parent != null) 
+            {
+                this.idParent = parent.idParent;
+            }
+            else 
+            {
+                this.idParent = "global_";
+            }
         }
 
         public string GetEnvName() 
@@ -31,16 +44,28 @@ namespace CompiPascal.Interpreter
             this.environmentName = name;
         }
 
+        public LinkedList<string> GetCodes() 
+        {
+            return this.codes;
+        }
+
         public void declareVariable(string id, Symbol variable)
         {
-            if (!this.variables.ContainsKey(id))
+            Environment actual = this;
+            while(actual != null) 
             {
-                this.variables.Add(id, variable);
+                if (!actual.variables.ContainsKey(id))
+                {
+                    actual.variables.Add(id, variable);
+                    return;
+                }
+                else
+                {
+                    actual = actual.parent;
+                }
             }
-            else
-            {
-                throw new Exception("The varaible " + id + " already exists in the current environment.");
-            }
+            //actual.variables.Add(id, variable);
+            //throw new Exception("The varaible " + id + " already exists in the current environment.");
         }
 
         public void assignVariableValue(string id, object value) 
@@ -59,7 +84,7 @@ namespace CompiPascal.Interpreter
                 }
                 else 
                 {
-                    throw new Exception("The variable " + id + " doesn´t exist, so an assignment isn´t possible.");
+                    throw new CompiPascal.Utils.PascalError(0, 0, "The variable " + id + " doesn´t exist, so an assignment isn´t possible.", "Semantic");
                 }
             }
         }
@@ -169,7 +194,7 @@ namespace CompiPascal.Interpreter
             }
             else
             {
-                throw new Exception("The function " + id + " already exists in the current environment.");
+                throw new CompiPascal.Utils.PascalError(func.line, func.column, "The function " + id + " already exists in the current environment.", "Semantic");
             }
         }
 
@@ -205,7 +230,7 @@ namespace CompiPascal.Interpreter
             }
             else
             {
-                throw new Exception("The procedure " + id + " already exists in the current environment.");
+                throw new CompiPascal.Utils.PascalError(proc.line, proc.column, "The procedure " + id + " already exists in the current environment.", "Semantic");
             }
         }
 
@@ -230,5 +255,24 @@ namespace CompiPascal.Interpreter
             }
             return actual;
         }
+
+        public string GetStringVar() 
+        {
+            string cadena = "";
+            Environment env = this;
+            while(env.parent != null)
+            {
+                foreach (KeyValuePair<string, Symbol> variable in this.variables)
+                {
+                    cadena += ", " + variable.Value.id + " : " + variable.Value.type.type.ToString().ToLower();
+                }
+                env = env.parent;
+            }
+
+            return cadena;
+        }
+
+
+        //public void Save(string id, object value, )
     }
 }

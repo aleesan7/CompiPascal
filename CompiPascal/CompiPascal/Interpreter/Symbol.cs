@@ -9,6 +9,7 @@ namespace CompiPascal.Interpreter
         public object value;
         public string id;
         public Type type;
+        public bool constant = false;
         public int line;
         public int column;
         private LinkedList<int> dimentions;

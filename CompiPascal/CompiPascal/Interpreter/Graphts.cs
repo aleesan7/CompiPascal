@@ -11,7 +11,6 @@ namespace CompiPascal.Interpreter
 
         public Graphts() 
         {
-            this.results = new LinkedList<string>();
         }
 
         public override object execute(Environment env)

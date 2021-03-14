@@ -15,7 +15,6 @@ namespace CompiPascal.Interpreter
             this.id = id;
             this.value = value;
             this.indexes = indexes;
-            this.results = new LinkedList<string>();
         }
 
         public override object execute(Environment env)

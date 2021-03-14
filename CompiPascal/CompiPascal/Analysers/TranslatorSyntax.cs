@@ -91,13 +91,6 @@ namespace CompiPascal.Analysers
                 try
                 {
                     object execution = instruction.executeTranslate(global);
-                    if (instruction.results.Count > 0)
-                    {
-                        foreach (string result in instruction.results)
-                        {
-                            resultsList.Add(result);
-                        }
-                    }
                 }
                 catch (CompiPascal.Utils.PascalError ex)
                 {
@@ -114,7 +107,8 @@ namespace CompiPascal.Analysers
                 case "var":
                     if (actual.ChildNodes.Count == 5)
                     {
-                        return new Declare(actual.ChildNodes[1].ChildNodes[0].Token.Text.ToString(), expression(actual.ChildNodes[3]), actual.ChildNodes[1].ChildNodes[0].Span.Location.Line, actual.ChildNodes[1].ChildNodes[0].Span.Location.Column);
+                        //return new Declare(actual.ChildNodes[1].ChildNodes[0].Token.Text.ToString(), expression(actual.ChildNodes[3]), actual.ChildNodes[1].ChildNodes[0].Span.Location.Line, actual.ChildNodes[1].ChildNodes[0].Span.Location.Column);
+                        return null;
                     }
                     else
                     {
@@ -129,7 +123,8 @@ namespace CompiPascal.Analysers
                             }
                             else
                             {
-                                return new Declare(actual.ChildNodes[1].ChildNodes[0].Token.Text.ToString(), newLiteralWithDefaultValue(actual.ChildNodes[1].ChildNodes[2]), actual.ChildNodes[1].ChildNodes[0].Span.Location.Line, actual.ChildNodes[1].ChildNodes[0].Span.Location.Column);
+                                //return new Declare(actual.ChildNodes[1].ChildNodes[0].Token.Text.ToString(), newLiteralWithDefaultValue(actual.ChildNodes[1].ChildNodes[2]), actual.ChildNodes[1].ChildNodes[0].Span.Location.Line, actual.ChildNodes[1].ChildNodes[0].Span.Location.Column);
+                                return null;
                             }
                         }
                         else

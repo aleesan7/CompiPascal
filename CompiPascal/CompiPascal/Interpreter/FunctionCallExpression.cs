@@ -9,17 +9,20 @@ namespace CompiPascal.Interpreter
     {
         private string id;
         private LinkedList<Expression> parameters;
+        private LinkedList<string> results;
 
         public FunctionCallExpression(string id)
         {
             this.id = id;
             this.parameters = new LinkedList<Expression>();
+            this.results = new LinkedList<string>();
         }
 
         public FunctionCallExpression(string id, LinkedList<Expression> parameters)
         {
             this.id = id;
             this.parameters = parameters;
+            this.results = new LinkedList<string>();
         }
 
         public override Symbol evaluate(Environment env)
@@ -36,18 +39,27 @@ namespace CompiPascal.Interpreter
                 switch (func.GetFunctionType())
                 {
                     case Function.FunctionTypes.BOOLEAN:
-                        newEnv.declareVariable(this.id, new Symbol(null, new Type(Types.BOOLEAN, null), this.id, 0, 0));
+                        newEnv.declareVariable(this.id, new Symbol(false, new Type(Types.BOOLEAN, null), this.id, 0, 0));
                         break;
                     case Function.FunctionTypes.INTEGER:
-                        newEnv.declareVariable(this.id, new Symbol(null, new Type(Types.INTEGER, null), this.id, 0, 0));
+                        newEnv.declareVariable(this.id, new Symbol(0, new Type(Types.INTEGER, null), this.id, 0, 0));
                         break;
                     case Function.FunctionTypes.STRING:
-                        newEnv.declareVariable(this.id, new Symbol(null, new Type(Types.STRING, null), this.id, 0, 0));
+                        newEnv.declareVariable(this.id, new Symbol("", new Type(Types.STRING, null), this.id, 0, 0));
                         break;
                     case Function.FunctionTypes.REAL:
-                        newEnv.declareVariable(this.id, new Symbol(null, new Type(Types.REAL, null), this.id, 0, 0));
+                        newEnv.declareVariable(this.id, new Symbol(0.0, new Type(Types.REAL, null), this.id, 0, 0));
                         break;
 
+                }
+
+                if (func.localVariables.Count > 0)
+                {
+                    //pass the func variables to the new local environment
+                    foreach (var variable in func.localVariables)
+                    {
+                        variable.execute(newEnv);
+                    }
                 }
 
                 for (int i=0;i<this.parameters.Count; i++) 

@@ -7,11 +7,13 @@ namespace CompiPascal.Interpreter
     class Function : Instruction
     {
         public string id;
+        public string uniqueID;
         public FunctionTypes functionType;
         public LinkedList<Declare> parameters;
         public LinkedList<Instruction> localVariables;
         public LinkedList<Instruction> instructions;
         public LinkedList<Expression> parameterValues;
+        public LinkedList<Function> nestedFunctions;
         public int line;
         public int column;
 
@@ -35,7 +37,6 @@ namespace CompiPascal.Interpreter
             this.instructions = instructions;
             this.line = line;
             this.column = column;
-            this.results = new LinkedList<string>();
         }
 
         //Function with local vars and instructions
@@ -48,7 +49,6 @@ namespace CompiPascal.Interpreter
             this.instructions = instructions;
             this.line = line;
             this.column = column;
-            this.results = new LinkedList<string>();
         }
 
         //Function with parameters and instructions
@@ -61,20 +61,19 @@ namespace CompiPascal.Interpreter
             this.instructions = instructions;
             this.line = line;
             this.column = column;
-            this.results = new LinkedList<string>();
         }
 
         //Function with only instructions
         public Function(string id, FunctionTypes type, LinkedList<Instruction> instructions, int line, int column)
         {
             this.id = id;
+            this.uniqueID = "";
             this.functionType = type;
             this.parameters = new LinkedList<Declare>();
             this.localVariables = new LinkedList<Instruction>();
             this.instructions = instructions;
             this.line = line;
             this.column = column;
-            this.results = new LinkedList<string>();
         }
 
         public FunctionTypes GetFunctionType() 
@@ -95,7 +94,48 @@ namespace CompiPascal.Interpreter
 
         public override string executeTranslate(Environment env)
         {
-            throw new NotImplementedException();
+            env.AddFunction(this.id, this);
+            Environment newEnv = new Environment(env);
+            newEnv.idParent += this.id + "_";
+            newEnv.actualFunct = this.id;
+            this.uniqueID = newEnv.idParent;
+
+            LinkedList<string> codes = new LinkedList<string>();
+
+            string cadena = "function " + newEnv.idParent + "(";
+            foreach(Declare dec in this.parameters) 
+            {
+                cadena += dec.GetId() + " : " + dec.type.type + ";";
+
+            }
+
+            if (this.parameters.Count > 0) 
+            {
+                cadena = cadena.Substring(0, cadena.Length - 1);
+            }
+
+            cadena += env.GetStringVar();
+
+            cadena += ") : " + this.functionType.ToString().ToLower() + ";" + System.Environment.NewLine;
+
+
+            foreach(Instruction instruction in this.localVariables) 
+            {
+                Declare dec = (Declare)instruction;
+
+                cadena += dec.executeTranslate(newEnv) + System.Environment.NewLine; 
+            }
+
+            cadena += "begin" + System.Environment.NewLine;
+
+            foreach(Instruction instruction in this.instructions) 
+            {
+                cadena += "\t" + instruction.executeTranslate(newEnv)+ System.Environment.NewLine;
+            }
+
+            cadena += "end;" + System.Environment.NewLine;
+
+            return cadena;
         }
     }
 }
