@@ -247,6 +247,9 @@ namespace CompiPascal
                         GenerateAST();
                     }
                     break;
+                case "&Exit":
+                    Application.Exit();
+                    break;
             }
         }
 

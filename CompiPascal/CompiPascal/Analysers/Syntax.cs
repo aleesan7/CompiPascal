@@ -79,11 +79,13 @@ namespace CompiPascal.Analysers
             {
                 generateGraph(root);
 
+                string programName = root.ChildNodes[0].ChildNodes[1].Token.Text;
+
                 LinkedList<Instruction> constantDefinition = instructions(root.ChildNodes[2].ChildNodes[0]);
                 LinkedList<Instruction> variableDeclaration = instructions(root.ChildNodes[2].ChildNodes[1]);
                 LinkedList<Instruction> functionAndProcedureDeclaration = instructions(root.ChildNodes[2].ChildNodes[2].ChildNodes[0].ChildNodes[0]);
                 LinkedList<Instruction> instructionsList = instructions(root.ChildNodes[2].ChildNodes[4]);
-                executeTranslator(variableDeclaration, functionAndProcedureDeclaration, instructionsList);
+                executeTranslator(variableDeclaration, functionAndProcedureDeclaration, instructionsList, programName);
 
 
             }
@@ -130,11 +132,13 @@ namespace CompiPascal.Analysers
             }
         }
 
-        public void executeTranslator(LinkedList<Instruction> variables, LinkedList<Instruction> functionsAndProcedures, LinkedList<Instruction> instructions)
+        public void executeTranslator(LinkedList<Instruction> variables, LinkedList<Instruction> functionsAndProcedures, LinkedList<Instruction> instructions, string mainProgramName)
         {
             Interpreter.Environment global = new Interpreter.Environment(null);
             string execution = string.Empty;
             global.SetEnvName("global");
+
+            execution += "program " + mainProgramName + ";" + System.Environment.NewLine;
 
             foreach (var variable in variables)
             {

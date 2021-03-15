@@ -70,7 +70,7 @@ namespace CompiPascal.Interpreter
             }
             result += System.Environment.NewLine;
 
-            env.declareVariable(this.id, variable);
+            //env.declareVariable(this.id, variable);
             return result;
         }
 

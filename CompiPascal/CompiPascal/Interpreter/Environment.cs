@@ -264,7 +264,23 @@ namespace CompiPascal.Interpreter
             {
                 foreach (KeyValuePair<string, Symbol> variable in this.variables)
                 {
-                    cadena += ", " + variable.Value.id + " : " + variable.Value.type.type.ToString().ToLower();
+                    cadena += variable.Value.id + " : " + variable.Value.type.type.ToString().ToLower() + ",";
+                }
+                env = env.parent;
+            }
+
+            return cadena;
+        }
+
+        public string GetStringParam() 
+        {
+            string cadena = "";
+            Environment env = this;
+            while (env.parent != null)
+            {
+                foreach (KeyValuePair<string, Symbol> variable in this.variables)
+                {
+                    cadena += ", " + variable.Value.id +",";
                 }
                 env = env.parent;
             }

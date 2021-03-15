@@ -166,19 +166,21 @@ namespace CompiPascal.Interpreter
                     cadena = proc.uniqueID + "(";
                     for (int i = 0; i < this.parameters.Count; i++)
                     {
-                        Symbol tempSymbol = this.parameters.ElementAt(i).evaluate(env);
-                        env.declareVariable(proc.parameters.ElementAt(i).GetId(), tempSymbol);
-                        cadena += tempSymbol.value.ToString() + ",";
+                        string tempSymbol = this.parameters.ElementAt(i).evaluateTranslate(env);
+                        //env.declareVariable(proc.parameters.ElementAt(i).GetId(), tempSymbol);
+                        cadena += tempSymbol + ",";
                         entro = true;
                     }
 
+                    cadena += env.GetStringParam();
+
                     if (entro) 
                     {
-                        cadena = cadena.Substring(0, cadena.Length - 1) + ")";
+                        cadena = cadena.Substring(0, cadena.Length - 1) + ");"+System.Environment.NewLine;
                     }
                     else 
                     {
-                        cadena +=  ")";
+                        cadena +=  ");"+System.Environment.NewLine;
                     }
                     
 
